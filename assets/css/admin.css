@@ -1,0 +1,181 @@
+/* DressCode Tool admin styles. */
+
+/* ---- Editor AI control (lives in the media-buttons toolbar row) ---- */
+.dresscode-bar {
+	display: -webkit-inline-box;
+	display: inline-flex;
+	-webkit-box-align: center;
+	align-items: center;
+	gap: 6px;
+	margin: 0 0 0 8px;
+	vertical-align: middle;
+}
+
+.dresscode-bar.dresscode-floating {
+	position: absolute;
+	top: 8px;
+	right: 10px;
+	z-index: 20;
+	margin: 0;
+}
+
+.dresscode-bar.dresscode-hidden {
+	display: none;
+}
+
+.dresscode-skill {
+	height: 30px;
+	max-width: 180px;
+	font-size: 12px;
+	line-height: 1;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	background: #fff;
+	vertical-align: middle;
+}
+
+.dresscode-btn {
+	height: 30px !important;
+	line-height: 1 !important;
+	padding: 0 14px !important;
+	display: -webkit-inline-box !important;
+	display: inline-flex !important;
+	-webkit-box-align: center !important;
+	align-items: center !important;
+	vertical-align: middle;
+	gap: 0;
+	background: #f24a00 !important;
+	border-color: #d63e00 !important;
+	color: #fff !important;
+	text-shadow: none !important;
+	font-weight: 600;
+}
+
+.dresscode-btn:hover:not(:disabled) {
+	background: #d63e00 !important;
+	border-color: #b83600 !important;
+	color: #fff !important;
+}
+
+/* Sparkle icon: always visible next to the label; spins while working. */
+.dresscode-btn .dresscode-icon {
+	display: -webkit-inline-box;
+	display: inline-flex;
+	-webkit-box-align: center;
+	align-items: center;
+	-webkit-box-flex: 0;
+	flex: 0 0 auto;
+	width: 14px;
+	height: 14px;
+	margin-right: 5px;
+	line-height: 1;
+}
+
+.dresscode-btn .dresscode-icon svg {
+	display: block;
+	width: 14px;
+	height: 14px;
+}
+
+.dresscode-btn.dresscode-loading {
+	opacity: 0.9;
+	cursor: default;
+}
+
+.dresscode-btn.dresscode-loading .dresscode-icon {
+	-webkit-animation: dresscode-spin 1.2s linear infinite;
+	animation: dresscode-spin 1.2s linear infinite;
+}
+
+.dresscode-tab-actions .dresscode-icon,
+.dresscode-tab-actions .dresscode-icon svg {
+	width: 12px;
+	height: 12px;
+}
+
+@-webkit-keyframes dresscode-spin {
+	to { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+@keyframes dresscode-spin {
+	to { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+/* ---- Admin menu icon (sparkle SVG, follows core menu colors) ---- */
+#adminmenu #toplevel_page_dresscode .wp-menu-image {
+	display: -webkit-box;
+	display: flex;
+	-webkit-box-align: center;
+	align-items: center;
+	-webkit-box-pack: center;
+	justify-content: center;
+	background: none !important;
+}
+
+#adminmenu #toplevel_page_dresscode .wp-menu-image:before {
+	content: "";
+	display: block;
+	width: 20px;
+	height: 20px;
+	background-color: currentColor;
+	-webkit-mask: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHBhdGggZmlsbD0iIzAwMCIgZD0iTTI1Ljg3NSAzLjk0NEwyOS4zOSAxNy4yM2ExLjk0IDEuOTQgMCAwIDAgMS4zOCAxLjM3OWwxMy4yODcgMy41MTVjMS45MjQuNTEgMS45MjQgMy4yNCAwIDMuNzVMMzAuNzY5IDI5LjM5YTEuOTQgMS45NCAwIDAgMC0xLjM3OSAxLjM4bC0zLjUxNSAxMy4yODdjLS41MSAxLjkyNC0zLjI0IDEuOTI0LTMuNzUgMEwxOC42MSAzMC43NjlhMS45NCAxLjk0IDAgMCAwLTEuMzgtMS4zNzlMMy45NDQgMjUuODc1Yy0xLjkyNC0uNTEtMS45MjQtMy4yNCAwLTMuNzVsMTMuMjg4LTMuNTE1YTEuOTQgMS45NCAwIDAgMCAxLjM3OS0xLjM4bDMuNTE1LTEzLjI4N2MuNTEtMS45MjQgMy4yNC0xLjkyNCAzLjc1IDAiLz48L3N2Zz4=") center center / contain no-repeat;
+	mask: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHBhdGggZmlsbD0iIzAwMCIgZD0iTTI1Ljg3NSAzLjk0NEwyOS4zOSAxNy4yM2ExLjk0IDEuOTQgMCAwIDAgMS4zOCAxLjM3OWwxMy4yODcgMy41MTVjMS45MjQuNTEgMS45MjQgMy4yNCAwIDMuNzVMMzAuNzY5IDI5LjM5YTEuOTQgMS45NCAwIDAgMC0xLjM3OSAxLjM4bC0zLjUxNSAxMy4yODdjLS41MSAxLjkyNC0zLjI0IDEuOTI0LTMuNzUgMEwxOC42MSAzMC43NjlhMS45NCAxLjk0IDAgMCAwLTEuMzgtMS4zNzlMMy45NDQgMjUuODc1Yy0xLjkyNC0uNTEtMS45MjQtMy4yNCAwLTMuNzVsMTMuMjg4LTMuNTE1YTEuOTQgMS45NCAwIDAgMCAxLjM3OS0xLjM4bDMuNTE1LTEzLjI4N2MuNTEtMS45MjQgMy4yNC0xLjkyNCAzLjc1IDAiLz48L3N2Zz4=") center center / contain no-repeat;
+}
+
+/* ---- Per-tab AI button (WB Custom Product Tabs) ---- */
+.dresscode-tab-actions {
+	margin: 6px 0 0;
+	text-align: right;
+}
+
+.dresscode-tab-actions .dresscode-tab-btn {
+	height: 26px !important;
+	padding: 0 10px !important;
+	font-size: 12px;
+}
+
+/* ---- Toast ---- */
+.dresscode-toast {
+	position: fixed;
+	right: 24px;
+	bottom: 24px;
+	z-index: 99999;
+	max-width: 360px;
+	padding: 12px 18px;
+	background: #1e1e1e;
+	color: #fff;
+	border-radius: 6px;
+	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+	font-size: 13px;
+	line-height: 1.4;
+	opacity: 0;
+	-webkit-transform: translateY(10px);
+	transform: translateY(10px);
+	transition: opacity 0.2s ease, -webkit-transform 0.2s ease;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+	pointer-events: none;
+}
+
+.dresscode-toast.dresscode-toast-show {
+	opacity: 1;
+	-webkit-transform: translateY(0);
+	transform: translateY(0);
+}
+
+.dresscode-toast.dresscode-toast-error {
+	background: #b32d2e;
+}
+
+/* ---- Skills admin page ---- */
+#dresscode-skills-table th,
+#dresscode-skills-table td {
+	vertical-align: middle;
+}
+
+#dresscode_skill_prompt {
+	font-family: Consolas, Monaco, monospace;
+	font-size: 13px;
+}
+
+.dresscode-skill-delete {
+	color: #b32d2e;
+}
