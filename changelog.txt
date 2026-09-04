@@ -1,0 +1,9 @@
+*** DressCode Changelog ***
+
+2026.09.02 - version 0.1.0
+ * New - Classic editor "AI Optimize" button + skill selector (posts, pages, products)
+ * New - Skill system: SKILL.md editing, references/*.md, zip import, default skill, self-healing default seed
+ * New - WooCommerce Custom Tabs per-tab AI buttons (runtime-added tabs included)
+ * New - GLM API settings: API format (OpenAI-compatible / Anthropic Messages), endpoint, model, temperature
+ * New - Server-side output minification and prompt pre-cleaning for long content
+ * New - Bilingual: Chinese source strings with bundled English translation (zh_CN/en_US)

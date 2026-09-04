@@ -1,0 +1,284 @@
+# DressCode Tool translation template.
+msgid ""
+msgstr ""
+"Project-Id-Version: DressCode 0.1.0\n"
+"Language: \n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: dresscode\n"
+
+#: class-wordpress-plugin-template-settings.php:233
+msgid "0~2，越小越稳定，建议 0.2~0.5。"
+msgstr ""
+
+#: class-dresscode-editor.php:128
+msgid "AI 优化"
+msgstr ""
+
+#: class-dresscode-editor.php:129
+msgid "AI 优化中…"
+msgstr ""
+
+#: class-dresscode-editor.php:203
+msgid "AI 生成超时（内容可能过长），请重试；若仍超时，可选中一部分内容分段优化。"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:205
+msgid "API 格式"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:211
+msgid "Anthropic Messages (/v1/messages)"
+msgstr ""
+
+#: class-dresscode-skills.php:588
+#: class-dresscode-skills.php:589
+msgid "DressCode"
+msgstr ""
+
+#: class-dresscode-skills.php:627
+msgid "DressCode Skills"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:153
+#: class-wordpress-plugin-template-settings.php:330
+msgid "DressCode 设置"
+msgstr ""
+
+#: class-dresscode-skills.php:480
+msgid "DressCode 通用规范"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:197
+msgid "GLM API Key"
+msgstr ""
+
+#: class-dresscode-glm-client.php:212
+msgid "GLM 接口返回内容为空或格式异常。"
+msgstr ""
+
+#: class-dresscode-glm-client.php:182
+msgid "GLM 接口返回错误（%1$s）：%2$s"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:192
+msgid "GLM 接口配置"
+msgstr ""
+
+#: class-dresscode-skills.php:650
+msgid "ID"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:210
+msgid "OpenAI 兼容 (chat/completions)"
+msgstr ""
+
+#: class-dresscode-skills.php:726
+msgid "SKILL.md（System Prompt）"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:179
+msgid "Settings"
+msgstr ""
+
+#: class-dresscode-editor.php:134
+msgid "Skill"
+msgstr ""
+
+#: class-dresscode-skills.php:599
+#: class-dresscode-skills.php:600
+msgid "Skills"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:232
+msgid "Temperature"
+msgstr ""
+
+#: class-dresscode-skills.php:724
+msgid "zip 内须含 SKILL.md（可在根目录，或单个子文件夹下）。上传后将以此 zip 内容创建/替换 Skill 文件夹，下面的 SKILL.md 文本框会被忽略。"
+msgstr ""
+
+#: class-dresscode-skills.php:722
+msgid "上传 zip 导入"
+msgstr ""
+
+#: class-dresscode-skills.php:872
+msgid "上传的 zip 文件无效。"
+msgstr ""
+
+#: class-dresscode-editor.php:131
+msgid "优化失败"
+msgstr ""
+
+#: class-dresscode-editor.php:130
+msgid "优化完成"
+msgstr ""
+
+#: class-dresscode-glm-client.php:231
+msgid "你是 HTML 样式优化助手。请严格按照系统消息中的规范，优化下面这段 HTML 的样式与结构：保留语义化标签与原有内容文字，补充必要的内联样式或 CSS 变量，使其符合品牌视觉标准。只输出优化后的完整 HTML 代码片段，不要任何解释说明，不要使用 markdown 代码围栏（```）。需要优化的 HTML 如下："
+msgstr ""
+
+#: class-dresscode-editor.php:194
+msgid "你是 HTML 样式优化助手。请优化用户提供的 HTML，使其语义清晰、样式规范、响应式，只输出优化后的完整 HTML 片段，不要解释、不要 markdown 围栏。"
+msgstr ""
+
+#: class-dresscode-skills.php:744
+msgid "保存 Skill"
+msgstr ""
+
+#: class-dresscode-skills.php:669
+msgid "删除"
+msgstr ""
+
+#: class-dresscode-skills.php:911
+msgid "压缩包内未找到 SKILL.md（应在根目录或单个子文件夹下）。"
+msgstr ""
+
+#: class-dresscode-skills.php:731
+msgid "参考文件"
+msgstr ""
+
+#: class-dresscode-skills.php:651
+#: class-dresscode-skills.php:711
+msgid "名称"
+msgstr ""
+
+#: class-dresscode-skills.php:778
+msgid "名称不能为空。"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:198
+msgid "在 open.bigmodel.cn 获取的 API Key，以密码框掩码显示；如需更换直接覆盖。"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:225
+msgid "如 glm-4.6、glm-4.5、glm-4-plus 等，按账号可用模型填写。"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:217
+msgid "完整端点 URL。OpenAI 格式如 https://open.bigmodel.cn/api/paas/v4/chat/completions；Anthropic 格式如 https://your-relay.com/v1/messages。"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:206
+msgid "按服务商选择：OpenAI 兼容（chat/completions）或 Anthropic Messages（/v1/messages）。"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:216
+msgid "接口地址"
+msgstr ""
+
+#: class-dresscode-skills.php:714
+msgid "描述"
+msgstr ""
+
+#: class-dresscode-skills.php:654
+msgid "操作"
+msgstr ""
+
+#: class-dresscode-skills.php:652
+#: class-dresscode-skills.php:718
+msgid "文件夹"
+msgstr ""
+
+#: class-dresscode-skills.php:719
+msgid "文件夹名（slug）创建后不可更改；上传 zip 会替换其内容。"
+msgstr ""
+
+#: class-dresscode-skills.php:628
+#: class-dresscode-skills.php:700
+msgid "新增 / 导入 Skill"
+msgstr ""
+
+#: class-dresscode-skills.php:765
+#: class-dresscode-skills.php:966
+msgid "无效请求。"
+msgstr ""
+
+#: class-dresscode-editor.php:172
+#: class-dresscode-skills.php:761
+#: class-dresscode-skills.php:962
+msgid "无权限。"
+msgstr ""
+
+#: class-dresscode-skills.php:877
+msgid "无法初始化文件系统。"
+msgstr ""
+
+#: class-dresscode-skills.php:658
+msgid "暂无 Skill，请新增或导入。"
+msgstr ""
+
+#: class-dresscode-skills.php:728
+msgid "未上传 zip 时，以此文本作为 SKILL.md 内容保存。可选附带 references/*.md（在 zip 内）。"
+msgstr ""
+
+#: class-dresscode-skills.php:811
+msgid "未能创建 Skill 文件夹。"
+msgstr ""
+
+#: class-dresscode-glm-client.php:86
+msgid "未配置 GLM API Key，请先在 DressCode 设置中填写。"
+msgstr ""
+
+#: class-dresscode-editor.php:132
+#: class-dresscode-editor.php:183
+msgid "未配置 GLM API Key，请到 DressCode → 设置中填写。"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:224
+msgid "模型"
+msgstr ""
+
+#: class-dresscode-skills.php:629
+msgid "每个 Skill 是一个独立文件夹（含 SKILL.md，可选 references/*.md）。可手写或上传 zip 导入。AI 按选中的 Skill 优化编辑器里的 HTML。"
+msgstr ""
+
+#: class-dresscode-skills.php:668
+msgid "编辑"
+msgstr ""
+
+#: class-dresscode-skills.php:700
+msgid "编辑 Skill： %s"
+msgstr ""
+
+#: class-dresscode-skills.php:740
+msgid "编辑器 AI 按钮未选择时使用此 Skill"
+msgstr ""
+
+#: class-dresscode-editor.php:133
+#: class-dresscode-editor.php:179
+msgid "编辑器内容为空，无内容可优化。"
+msgstr ""
+
+#: class-dresscode-skills.php:739
+msgid "设为默认"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:154
+msgid "设置"
+msgstr ""
+
+#: class-dresscode-skills.php:799
+msgid "请上传 zip，或填写 SKILL.md 内容。"
+msgstr ""
+
+#: class-dresscode-skills.php:745
+msgid "返回"
+msgstr ""
+
+#: class-dresscode-skills.php:736
+msgid "这些文件会自动拼接到 System Prompt 末尾。仅 zip 导入可带入。"
+msgstr ""
+
+#: class-wordpress-plugin-template-settings.php:193
+msgid "配置智谱 GLM（BigModel）API。API Key 优先在此填写。"
+msgstr ""
+
+#: class-dresscode-skills.php:653
+msgid "默认"
+msgstr ""
+
+#: class-dresscode-skills.php:481
+msgid "默认通用规范：rem 字体系统、1.5 行高、圆角、响应式基准、CSS 变量。可编辑或重新上传覆盖。"
+msgstr ""
+

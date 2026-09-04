@@ -1,0 +1,208 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: DressCode 0.1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en_US\n"
+"X-Domain: dresscode\n"
+"\n"
+
+msgid "0~2，越小越稳定，建议 0.2~0.5。"
+msgstr "0–2. Lower is more deterministic; 0.2–0.5 is recommended."
+
+msgid "AI 优化"
+msgstr "AI Optimize"
+
+msgid "AI 优化中…"
+msgstr "Optimizing…"
+
+msgid "AI 生成超时（内容可能过长），请重试；若仍超时，可选中一部分内容分段优化。"
+msgstr "The AI request timed out (the content may be too long). Please retry; if it keeps timing out, select part of the content and optimize it in sections."
+
+msgid "API 格式"
+msgstr "API Format"
+
+msgid "Anthropic Messages (/v1/messages)"
+msgstr "Anthropic Messages (/v1/messages)"
+
+msgid "DressCode"
+msgstr "DressCode"
+
+msgid "DressCode Skills"
+msgstr "DressCode Skills"
+
+msgid "DressCode 设置"
+msgstr "DressCode Settings"
+
+msgid "DressCode 通用规范"
+msgstr "DressCode Standard"
+
+msgid "GLM API Key"
+msgstr "GLM API Key"
+
+msgid "GLM 接口返回内容为空或格式异常。"
+msgstr "The GLM API returned empty or malformed content."
+
+msgid "GLM 接口返回错误（%1$s）：%2$s"
+msgstr "GLM API error (%1$s): %2$s"
+
+msgid "GLM 接口配置"
+msgstr "GLM API Configuration"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "OpenAI 兼容 (chat/completions)"
+msgstr "OpenAI-compatible (chat/completions)"
+
+msgid "SKILL.md（System Prompt）"
+msgstr "SKILL.md (System Prompt)"
+
+msgid "Settings"
+msgstr "Settings"
+
+msgid "Skill"
+msgstr "Skill"
+
+msgid "Skills"
+msgstr "Skills"
+
+msgid "Temperature"
+msgstr "Temperature"
+
+msgid "zip 内须含 SKILL.md（可在根目录，或单个子文件夹下）。上传后将以此 zip 内容创建/替换 Skill 文件夹，下面的 SKILL.md 文本框会被忽略。"
+msgstr "The zip must contain a SKILL.md (at the archive root, or inside a single subfolder). Uploading creates/replaces the skill folder with the zip contents; the SKILL.md text box below is then ignored."
+
+msgid "上传 zip 导入"
+msgstr "Import via zip upload"
+
+msgid "上传的 zip 文件无效。"
+msgstr "The uploaded zip file is invalid."
+
+msgid "优化失败"
+msgstr "Optimization failed"
+
+msgid "优化完成"
+msgstr "Optimization complete"
+
+msgid "你是 HTML 样式优化助手。请严格按照系统消息中的规范，优化下面这段 HTML 的样式与结构：保留语义化标签与原有内容文字，补充必要的内联样式或 CSS 变量，使其符合品牌视觉标准。只输出优化后的完整 HTML 代码片段，不要任何解释说明，不要使用 markdown 代码围栏（```）。需要优化的 HTML 如下："
+msgstr "You are an HTML styling assistant. Strictly following the rules in the system message, optimize the style and structure of the HTML below: keep the semantic tags and the original text, and add inline styles or CSS variables as needed to match the brand visual standard. Output only the complete optimized HTML fragment — no explanations, no markdown code fences. The HTML to optimize is as follows:"
+
+msgid "你是 HTML 样式优化助手。请优化用户提供的 HTML，使其语义清晰、样式规范、响应式，只输出优化后的完整 HTML 片段，不要解释、不要 markdown 围栏。"
+msgstr "You are an HTML styling assistant. Optimize the user-provided HTML so that it is semantic, consistently styled and responsive. Output only the complete optimized HTML fragment — no explanations, no markdown fences."
+
+msgid "保存 Skill"
+msgstr "Save Skill"
+
+msgid "删除"
+msgstr "Delete"
+
+msgid "压缩包内未找到 SKILL.md（应在根目录或单个子文件夹下）。"
+msgstr "No SKILL.md found in the archive (it must be at the root or inside a single subfolder)."
+
+msgid "参考文件"
+msgstr "Reference files"
+
+msgid "名称"
+msgstr "Name"
+
+msgid "名称不能为空。"
+msgstr "The name cannot be empty."
+
+msgid "在 open.bigmodel.cn 获取的 API Key，以密码框掩码显示；如需更换直接覆盖。"
+msgstr "API key from open.bigmodel.cn, shown masked in a password field; overwrite it to replace."
+
+msgid "如 glm-4.6、glm-4.5、glm-4-plus 等，按账号可用模型填写。"
+msgstr "e.g. glm-4.6, glm-4.5, glm-4-plus — use a model available to your account."
+
+msgid "完整端点 URL。OpenAI 格式如 https://open.bigmodel.cn/api/paas/v4/chat/completions；Anthropic 格式如 https://your-relay.com/v1/messages。"
+msgstr "Full endpoint URL. OpenAI format e.g. https://open.bigmodel.cn/api/paas/v4/chat/completions; Anthropic format e.g. https://your-relay.com/v1/messages."
+
+msgid "按服务商选择：OpenAI 兼容（chat/completions）或 Anthropic Messages（/v1/messages）。"
+msgstr "Choose per your provider: OpenAI-compatible (chat/completions) or Anthropic Messages (/v1/messages)."
+
+msgid "接口地址"
+msgstr "Endpoint URL"
+
+msgid "描述"
+msgstr "Description"
+
+msgid "操作"
+msgstr "Actions"
+
+msgid "文件夹"
+msgstr "Folder"
+
+msgid "文件夹名（slug）创建后不可更改；上传 zip 会替换其内容。"
+msgstr "The folder slug cannot be changed after creation; uploading a zip replaces its contents."
+
+msgid "新增 / 导入 Skill"
+msgstr "Add / Import Skill"
+
+msgid "无效请求。"
+msgstr "Invalid request."
+
+msgid "无权限。"
+msgstr "Permission denied."
+
+msgid "无法初始化文件系统。"
+msgstr "Unable to initialize the filesystem."
+
+msgid "暂无 Skill，请新增或导入。"
+msgstr "No skills yet — add or import one."
+
+msgid "未上传 zip 时，以此文本作为 SKILL.md 内容保存。可选附带 references/*.md（在 zip 内）。"
+msgstr "When no zip is uploaded, this text is saved as SKILL.md. Optionally include references/*.md inside the zip."
+
+msgid "未能创建 Skill 文件夹。"
+msgstr "Could not create the skill folder."
+
+msgid "未配置 GLM API Key，请先在 DressCode 设置中填写。"
+msgstr "No GLM API key configured. Set one under DressCode → Settings first."
+
+msgid "未配置 GLM API Key，请到 DressCode → 设置中填写。"
+msgstr "No GLM API key configured — please fill it in under DressCode → Settings."
+
+msgid "模型"
+msgstr "Model"
+
+msgid "每个 Skill 是一个独立文件夹（含 SKILL.md，可选 references/*.md）。可手写或上传 zip 导入。AI 按选中的 Skill 优化编辑器里的 HTML。"
+msgstr "Each skill is a standalone folder (with a SKILL.md and optional references/*.md). Write it by hand or import a zip. The AI optimizes the editor HTML according to the selected skill."
+
+msgid "编辑"
+msgstr "Edit"
+
+msgid "编辑 Skill： %s"
+msgstr "Edit skill: %s"
+
+msgid "编辑器 AI 按钮未选择时使用此 Skill"
+msgstr "Use this skill when nothing is selected in the editor AI dropdown"
+
+msgid "编辑器内容为空，无内容可优化。"
+msgstr "The editor is empty — nothing to optimize."
+
+msgid "设为默认"
+msgstr "Set as default"
+
+msgid "设置"
+msgstr "Settings"
+
+msgid "请上传 zip，或填写 SKILL.md 内容。"
+msgstr "Upload a zip, or fill in the SKILL.md content."
+
+msgid "返回"
+msgstr "Back"
+
+msgid "这些文件会自动拼接到 System Prompt 末尾。仅 zip 导入可带入。"
+msgstr "These files are appended to the system prompt automatically. They can only be brought in via zip import."
+
+msgid "配置智谱 GLM（BigModel）API。API Key 优先在此填写。"
+msgstr "Configure the Zhipu GLM (BigModel) API. Set the API key here."
+
+msgid "默认"
+msgstr "Default"
+
+msgid "默认通用规范：rem 字体系统、1.5 行高、圆角、响应式基准、CSS 变量。可编辑或重新上传覆盖。"
+msgstr "Default generic spec: rem font scale, 1.5 line height, border radii, responsive baselines, CSS variables. Edit or re-upload to override."
+
