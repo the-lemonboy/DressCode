@@ -125,14 +125,20 @@ class DressCode_Editor {
 				'defaultSkillId'  => $default_skill_id,
 				'hasApiKey'       => ! empty( $this->api_key ) ? 1 : 0,
 				'i18n'            => array(
-					'buttonLabel'   => __( 'AI 优化', 'dresscode' ),
-					'loading'       => __( 'AI 优化中…', 'dresscode' ),
-					'done'          => __( '优化完成', 'dresscode' ),
-					'failed'        => __( '优化失败', 'dresscode' ),
-					'noKey'         => __( '未配置 GLM API Key，请到 DressCode → 设置中填写。', 'dresscode' ),
-					'empty'         => __( '编辑器内容为空，无内容可优化。', 'dresscode' ),
-					'skillLabel'    => __( 'Skill', 'dresscode' ),
-					'settingsUrl'   => admin_url( 'admin.php?page=dresscode_settings' ),
+					'buttonLabel'    => __( 'AI 优化', 'dresscode' ),
+					'loading'        => __( 'AI 优化中…', 'dresscode' ),
+					'done'           => __( '优化完成', 'dresscode' ),
+					'failed'         => __( '优化失败（原因未知，请查看 DressCode → 设置中的最近失败记录）。', 'dresscode' ),
+					'errorTitle'     => __( 'AI 优化失败', 'dresscode' ),
+					'noKey'          => __( '未配置 GLM API Key，请到 DressCode → 设置中填写。', 'dresscode' ),
+					'empty'          => __( '编辑器内容为空，无内容可优化。', 'dresscode' ),
+					'stillWorking'   => __( '仍在优化中，内容较长时可能需要 1~3 分钟，请稍候…', 'dresscode' ),
+					'nonceExpired'   => __( '安全校验已过期（页面打开时间过长），请刷新页面后重试。', 'dresscode' ),
+					'networkError'   => __( '网络错误或请求被中断（HTTP 0）。请检查服务器能否访问设置中的接口地址。', 'dresscode' ),
+					'gatewayTimeout' => __( '网关/服务器超时（HTTP %s）。内容可能过长或模型响应超时，可选中部分内容分段优化。', 'dresscode' ),
+					'httpError'      => __( '请求失败（HTTP %s）', 'dresscode' ),
+					'skillLabel'     => __( 'Skill', 'dresscode' ),
+					'settingsUrl'    => admin_url( 'admin.php?page=dresscode_settings' ),
 				),
 			)
 		);
@@ -169,18 +175,26 @@ class DressCode_Editor {
 		check_ajax_referer( 'dresscode_optimize', 'nonce' );
 
 		if ( ! current_user_can( 'edit_posts' ) ) {
-			wp_send_json_error( __( '无权限。', 'dresscode' ), 403 );
+			$this->fail( __( '无权限。', 'dresscode' ), 403 );
 		}
 
 		$content   = isset( $_POST['content'] ) ? wp_unslash( $_POST['content'] ) : '';
 		$skill_id  = isset( $_POST['skill_id'] ) ? (int) $_POST['skill_id'] : 0;
 
+		$context = array(
+			'user'     => get_current_user_id(),
+			'skill'    => $skill_id,
+			'length'   => strlen( $content ),
+			'model'    => $this->model,
+			'endpoint' => wp_parse_url( $this->endpoint, PHP_URL_HOST ),
+		);
+
 		if ( '' === trim( $content ) ) {
-			wp_send_json_error( __( '编辑器内容为空，无内容可优化。', 'dresscode' ) );
+			$this->fail( __( '编辑器内容为空，无内容可优化。', 'dresscode' ), null, $context );
 		}
 
 		if ( empty( $this->api_key ) ) {
-			wp_send_json_error( __( '未配置 GLM API Key，请到 DressCode → 设置中填写。', 'dresscode' ) );
+			$this->fail( __( '未配置 GLM API Key，请到 DressCode → 设置中填写。', 'dresscode' ), null, $context );
 		}
 
 		// Resolve the skill system prompt (reads SKILL.md + references from disk).
@@ -202,10 +216,46 @@ class DressCode_Editor {
 			if ( false !== stripos( (string) $error, 'timed out' ) ) {
 				$error = __( 'AI 生成超时（内容可能过长），请重试；若仍超时，可选中一部分内容分段优化。', 'dresscode' );
 			}
-			wp_send_json_error( $error );
+			$this->fail( $error, null, $context + array( 'raw_error' => (string) $result['error'] ) );
 		}
 
+		// A success clears the recorded last failure.
+		delete_option( 'dresscode_last_error' );
+
 		wp_send_json_success( array( 'html' => $this->minify_html( $result['data'] ) ) );
+	}
+
+	/**
+	 * Report an optimize failure to the browser and leave a trace behind:
+	 * store the last error (shown on the settings page) and write it to the
+	 * PHP error log. AJAX responses are easy to miss on screen and impossible
+	 * to debug after the fact, so failures must be persisted as well.
+	 *
+	 * @param string   $message User-facing error message (also sent as JSON).
+	 * @param int|null $status  Optional HTTP status for the JSON response.
+	 * @param array    $context Diagnostic context (user, skill, length, ...).
+	 * @return void
+	 */
+	protected function fail( $message, $status = null, $context = array() ) {
+		$message = (string) $message;
+
+		update_option(
+			'dresscode_last_error',
+			array(
+				'time'    => time(),
+				'message' => $message,
+				'context' => $context,
+			),
+			false
+		);
+
+		$pairs = array();
+		foreach ( $context as $key => $value ) {
+			$pairs[] = $key . '=' . ( is_scalar( $value ) ? (string) $value : wp_json_encode( $value ) );
+		}
+		error_log( '[DressCode] AI 优化失败: ' . $message . ( $pairs ? ' (' . implode( ', ', $pairs ) . ')' : '' ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+
+		wp_send_json_error( $message, $status );
 	}
 
 	/**

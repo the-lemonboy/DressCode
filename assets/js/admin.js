@@ -139,6 +139,72 @@
 	}
 
 	/**
+	 * Persistent error banner. Request results can arrive minutes after the
+	 * click (reasoning models are slow), so a 3-second toast is easy to miss
+	 * entirely — errors stay on screen until dismissed.
+	 */
+	var $banner;
+	function showError( msg ) {
+		if ( ! $banner ) {
+			$banner = $( '<div id="dresscode-error-banner" class="dresscode-error-banner" />' ).appendTo( 'body' );
+			$( '<span class="dresscode-error-text" />' ).appendTo( $banner );
+			$( '<button type="button" class="dresscode-error-close" aria-label="close">&times;</button>' )
+				.on( 'click', function () {
+					$banner.removeClass( 'dresscode-error-banner-show' );
+				} )
+				.appendTo( $banner );
+		}
+		$banner.find( '.dresscode-error-text' ).text( CTAI.i18n.errorTitle + '：' + msg );
+		$banner.addClass( 'dresscode-error-banner-show' );
+	}
+
+	function clearError() {
+		if ( $banner ) {
+			$banner.removeClass( 'dresscode-error-banner-show' );
+		}
+	}
+
+	/**
+	 * Turn a failed HTTP request into a readable message: prefer the JSON body
+	 * from wp_send_json_error(), otherwise explain by HTTP status code.
+	 */
+	function requestErrorMessage( xhr ) {
+		var body = ( xhr && 'string' === typeof xhr.responseText ) ? $.trim( xhr.responseText ) : '';
+		var status = xhr ? xhr.status : 0;
+		var msg = null;
+
+		// WordPress dies with a plain "-1" body when the nonce check fails.
+		if ( '-1' === body ) {
+			return CTAI.i18n.nonceExpired;
+		}
+
+		if ( '{' === body.charAt( 0 ) ) {
+			try {
+				var j = JSON.parse( body );
+				if ( 'string' === typeof j.data ) {
+					msg = j.data;
+				} else if ( j.data && j.data.message ) {
+					msg = String( j.data.message );
+				}
+			} catch ( err ) {}
+		}
+
+		if ( ! msg ) {
+			if ( 0 === status ) {
+				msg = CTAI.i18n.networkError;
+			} else if ( 502 === status || 503 === status || 504 === status ) {
+				msg = CTAI.i18n.gatewayTimeout.replace( '%s', status );
+			} else {
+				msg = CTAI.i18n.httpError.replace( '%s', status );
+				if ( body && body.length <= 200 && '{' !== body.charAt( 0 ) && '<' !== body.charAt( 0 ) ) {
+					msg += '：' + body;
+				}
+			}
+		}
+		return msg;
+	}
+
+	/**
 	 * Sparkle icon shown (animated) while a request is in flight.
 	 */
 	var ICON =
@@ -192,7 +258,7 @@
 	 */
 	function sendAndApply( content, applyFn, $button ) {
 		if ( ! CTAI.hasApiKey ) {
-			toast( CTAI.i18n.noKey, true );
+			showError( CTAI.i18n.noKey );
 			return;
 		}
 		if ( busy ) {
@@ -201,6 +267,14 @@
 		busy = true;
 		setLoading( true, $button );
 
+		// Reasoning models can legitimately take minutes; ping the user so a
+		// slow request is not mistaken for a silent failure.
+		var pings = [ 45, 120, 210 ].map( function ( sec ) {
+			return setTimeout( function () {
+				toast( CTAI.i18n.stillWorking, false );
+			}, sec * 1000 );
+		} );
+
 		$.post( CTAI.ajaxUrl, {
 			action: CTAI.action,
 			nonce: CTAI.nonce,
@@ -208,22 +282,22 @@
 			skill_id: currentSkillId()
 		} ).done( function ( res ) {
 			if ( res && res.success && res.data && res.data.html ) {
+				clearError();
 				applyFn( res.data.html );
 				toast( CTAI.i18n.done, false );
 			} else {
-				var msg = ( res && res.data ) ? res.data : CTAI.i18n.failed;
-				toast( msg, true );
+				var msg = CTAI.i18n.failed;
+				if ( res && res.data ) {
+					msg = 'string' === typeof res.data ? res.data : String( res.data.message || CTAI.i18n.failed );
+				}
+				showError( msg );
 			}
 		} ).fail( function ( xhr ) {
-			var msg = CTAI.i18n.failed;
-			try {
-				var j = JSON.parse( xhr.responseText );
-				if ( j && j.data ) {
-					msg = j.data;
-				}
-			} catch ( err ) {}
-			toast( msg, true );
+			showError( requestErrorMessage( xhr ) );
 		} ).always( function () {
+			pings.forEach( function ( id ) {
+				clearTimeout( id );
+			} );
 			busy = false;
 			setLoading( false, $button );
 		} );

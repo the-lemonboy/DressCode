@@ -165,6 +165,54 @@
 	background: #b32d2e;
 }
 
+/* ---- Persistent error banner (request failures) ---- */
+.dresscode-error-banner {
+	position: fixed;
+	top: 46px;
+	left: 50%;
+	-webkit-transform: translateX(-50%);
+	transform: translateX(-50%);
+	z-index: 100000;
+	box-sizing: border-box;
+	max-width: 640px;
+	width: calc(100% - 48px);
+	max-height: 40vh;
+	overflow: auto;
+	padding: 12px 44px 12px 16px;
+	background: #b32d2e;
+	color: #fff;
+	border-radius: 0 0 6px 6px;
+	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+	font-size: 13px;
+	line-height: 1.5;
+	white-space: pre-wrap;
+	word-break: break-word;
+	display: none;
+}
+
+.dresscode-error-banner.dresscode-error-banner-show {
+	display: block;
+}
+
+.dresscode-error-banner .dresscode-error-close {
+	position: absolute;
+	top: 6px;
+	right: 8px;
+	border: 0;
+	border-radius: 3px;
+	background: transparent;
+	color: #fff;
+	font-size: 18px;
+	line-height: 1;
+	cursor: pointer;
+	padding: 2px 8px;
+}
+
+.dresscode-error-banner .dresscode-error-close:hover,
+.dresscode-error-banner .dresscode-error-close:focus {
+	background: rgba(255, 255, 255, 0.2);
+}
+
 /* ---- Skills admin page ---- */
 #dresscode-skills-table th,
 #dresscode-skills-table td {

@@ -329,6 +329,19 @@ class WordPress_Plugin_Template_Settings {
 		$html      = '<div class="wrap" id="' . $this->parent->_token . '_settings">' . "\n";
 			$html .= '<h2>' . __( 'DressCode 设置', 'dresscode' ) . '</h2>' . "\n";
 
+			// Last recorded AI optimize failure (persisted by DressCode_Editor::fail()).
+			$last_error = get_option( 'dresscode_last_error' );
+		if ( is_array( $last_error ) && ! empty( $last_error['message'] ) ) {
+			$html .= '<div class="notice notice-error inline"><p><strong>' . esc_html__( '最近一次 AI 优化失败：', 'dresscode' ) . '</strong>' . esc_html( $last_error['message'] );
+			if ( ! empty( $last_error['time'] ) ) {
+				$html .= ' <em>(' . esc_html( date_i18n( 'Y-m-d H:i', (int) $last_error['time'] ) ) . ')</em>';
+			}
+			if ( ! empty( $last_error['context'] ) && is_array( $last_error['context'] ) ) {
+				$html .= '</p><p><code>' . esc_html( wp_json_encode( $last_error['context'] ) ) . '</code>';
+			}
+			$html .= '</p></div>' . "\n";
+		}
+
 			$tab = '';
 		//phpcs:disable
 		if ( isset( $_GET['tab'] ) && $_GET['tab'] ) {
