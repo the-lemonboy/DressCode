@@ -187,6 +187,37 @@ class DressCode_GLM_Client {
 		}
 
 		$decoded = json_decode( $raw, true );
+		// Record only response metadata, never prompts, generated content or keys.
+		$diagnostics = array(
+			'http_status'   => (int) $code,
+			'response_bytes' => strlen( $raw ),
+			'json_valid'    => JSON_ERROR_NONE === json_last_error(),
+			'format'        => $this->format,
+		);
+		if ( is_array( $decoded ) ) {
+			$reason = 'anthropic' === $this->format
+				? ( isset( $decoded['stop_reason'] ) ? $decoded['stop_reason'] : null )
+				: ( isset( $decoded['choices'][0]['finish_reason'] ) ? $decoded['choices'][0]['finish_reason'] : null );
+			if ( is_string( $reason ) ) {
+				$diagnostics['finish_reason'] = substr( preg_replace( '/[^a-zA-Z0-9_-]/', '', $reason ), 0, 50 );
+			}
+			if ( isset( $decoded['usage'] ) && is_array( $decoded['usage'] ) ) {
+				foreach ( array( 'prompt_tokens', 'completion_tokens', 'total_tokens', 'input_tokens', 'output_tokens' ) as $key ) {
+					if ( isset( $decoded['usage'][ $key ] ) && is_numeric( $decoded['usage'][ $key ] ) ) {
+						$diagnostics[ $key ] = (int) $decoded['usage'][ $key ];
+					}
+				}
+			}
+		}
+
+		if ( isset( $diagnostics['finish_reason'] ) && in_array( $diagnostics['finish_reason'], array( 'length', 'max_tokens' ), true ) ) {
+			return array(
+				'success'     => false,
+				'data'        => '',
+				'error'       => 'The AI response reached its output token limit. Try optimizing a shorter selection.',
+				'diagnostics' => $diagnostics,
+			);
+		}
 
 		if ( 'anthropic' === $this->format ) {
 			// {"content":[{"type":"text","text":"..."}], ...}
@@ -200,8 +231,8 @@ class DressCode_GLM_Client {
 			}
 		} else {
 			// {"choices":[{"message":{"content":"..."}}]}
-			$content = ( is_array( $decoded ) && isset( $decoded['choices'][0]['message']['content'] ) )
-				? (string) $decoded['choices'][0]['message']['content']
+			$content = ( is_array( $decoded ) && isset( $decoded['choices'][0]['message']['content'] ) && is_string( $decoded['choices'][0]['message']['content'] ) )
+				? $decoded['choices'][0]['message']['content']
 				: '';
 		}
 
@@ -210,6 +241,7 @@ class DressCode_GLM_Client {
 				'success' => false,
 				'data'    => '',
 				'error'   => __( 'GLM 接口返回内容为空或格式异常。', 'dresscode' ),
+				'diagnostics' => $diagnostics,
 			);
 		}
 

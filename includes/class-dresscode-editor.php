@@ -216,6 +216,9 @@ class DressCode_Editor {
 			if ( false !== stripos( (string) $error, 'timed out' ) ) {
 				$error = __( 'AI 生成超时（内容可能过长），请重试；若仍超时，可选中一部分内容分段优化。', 'dresscode' );
 			}
+			if ( isset( $result['diagnostics'] ) && is_array( $result['diagnostics'] ) ) {
+				$context['response'] = $result['diagnostics'];
+			}
 			$this->fail( $error, null, $context + array( 'raw_error' => (string) $result['error'] ) );
 		}
 
