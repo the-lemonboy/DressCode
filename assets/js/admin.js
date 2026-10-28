@@ -11,6 +11,7 @@
  * into every local tab of the "WB Custom Product Tabs" panel, optimizing
  * that tab's content textarea (tabs added at runtime via "Add new tab" are
  * picked up through a MutationObserver).
+ * The shared WB tab popup editor also gets its own toolbar and skill selector.
  */
 ( function ( $, window, undefined ) {
 	'use strict';
@@ -20,16 +21,16 @@
 		return;
 	}
 
-	var $bar, $btn, $select;
+	var $select;
 	var busy = false;
 
 	/**
-	 * Get the TinyMCE editor instance for #content (if active).
+	 * Get the requested TinyMCE editor instance (main content by default).
 	 */
-	function getEditor() {
+	function getEditor( editorId ) {
 		try {
 			if ( window.tinymce ) {
-				return window.tinymce.get( 'content' );
+				return window.tinymce.get( editorId || 'content' );
 			}
 		} catch ( e ) {}
 		return null;
@@ -38,17 +39,18 @@
 	/**
 	 * Whether the visual editor is currently active.
 	 */
-	function isVisualActive() {
-		var ed = getEditor();
+	function isVisualActive( editorId ) {
+		var ed = getEditor( editorId );
 		return ! ! ( ed && ed.initialized && ! ed.isHidden() );
 	}
 
 	/**
 	 * Gather the content to optimize: selection if any, else full content.
 	 */
-	function getContent() {
-		var ed = getEditor();
-		if ( isVisualActive() ) {
+	function getContent( editorId ) {
+		editorId = editorId || 'content';
+		var ed = getEditor( editorId );
+		if ( isVisualActive( editorId ) ) {
 			var sel = '';
 			try { sel = ed.selection.getContent( { format: 'html' } ); } catch ( e ) {}
 			if ( sel && sel.trim() ) {
@@ -57,7 +59,7 @@
 			return { mode: 'visual', has: false, selected: ed.getContent() };
 		}
 
-		var el = document.getElementById( 'content' );
+		var el = document.getElementById( editorId );
 		if ( ! el ) {
 			return null;
 		}
@@ -79,21 +81,22 @@
 	 * Write optimized HTML back, preserving selection scope.
 	 */
 	function applyResult( ctx, html ) {
-		var ed = getEditor();
-		if ( ctx.mode === 'visual' && isVisualActive() ) {
+		var editorId = ctx.editorId || 'content';
+		var ed = getEditor( editorId );
+		if ( ctx.mode === 'visual' && ed ) {
 			if ( ctx.has ) {
 				ed.selection.setContent( html );
 			} else {
 				ed.setContent( html );
 			}
-			var ta = document.getElementById( 'content' );
+			var ta = document.getElementById( editorId );
 			if ( ta ) {
 				ta.value = ed.getContent();
 			}
 			return;
 		}
 
-		var el = document.getElementById( 'content' );
+		var el = document.getElementById( editorId );
 		if ( ! el ) {
 			return;
 		}
@@ -222,7 +225,6 @@
 	}
 
 	function setLoading( loading, $button ) {
-		$button = $button || $btn;
 		if ( ! $button || ! $button.length ) {
 			return;
 		}
@@ -243,9 +245,13 @@
 	}
 
 	/**
-	 * Skill id chosen in the main toolbar select (fallback: default skill).
+	 * Use the clicked editor's skill, then the main toolbar or default skill.
 	 */
-	function currentSkillId() {
+	function currentSkillId( $button ) {
+		var $localSelect = $button && $button.closest( '.dresscode-bar' ).find( '.dresscode-skill' );
+		if ( $localSelect && $localSelect.length ) {
+			return $localSelect.val();
+		}
 		if ( $select && $select.val() ) {
 			return $select.val();
 		}
@@ -279,12 +285,13 @@
 			action: CTAI.action,
 			nonce: CTAI.nonce,
 			content: content,
-			skill_id: currentSkillId()
+			skill_id: currentSkillId( $button )
 		} ).done( function ( res ) {
 			if ( res && res.success && res.data && res.data.html ) {
 				clearError();
-				applyFn( res.data.html );
-				toast( CTAI.i18n.done, false );
+				if ( applyFn( res.data.html ) !== false ) {
+					toast( CTAI.i18n.done, false );
+				}
 			} else {
 				var msg = CTAI.i18n.failed;
 				if ( res && res.data ) {
@@ -306,18 +313,30 @@
 	/**
 	 * Click handler for the main editor button: gather content and call AJAX.
 	 */
-	function onOptimize( e ) {
+	function onOptimize( e, editorId ) {
 		e.preventDefault();
 
-		var ctx = getContent();
+		editorId = editorId || 'content';
+		var $button = $( this );
+		var ctx = getContent( editorId );
 		if ( ! ctx || ! ctx.selected || ! $.trim( ctx.selected ) ) {
 			toast( CTAI.i18n.empty, true );
 			return;
 		}
 
+		ctx.editorId = editorId;
+		// WB reuses one popup editor for all tabs. Discard a late response if
+		// the user has finished editing or opened another tab in the meantime.
+		var $save = $( '.wb_cptb_tab_save_btn' );
+		var targetTab = editorId === 'wb_tab_editor' ? $save.data( 'target-tab' ) : null;
 		sendAndApply( ctx.selected, function ( html ) {
+			if ( editorId === 'wb_tab_editor' &&
+				( ! $button.closest( '.wb_cptb_tab_edit_popup' ).is( ':visible' ) ||
+					$save.data( 'target-tab' ) !== targetTab ) ) {
+				return false;
+			}
 			applyResult( ctx, html );
-		}, $btn );
+		}, $button );
 	}
 
 	/* ----------------------------------------------------------------------
@@ -410,17 +429,20 @@
 	 * Build the AI control (select + button) and inject it into the editor
 	 * toolbar's media-buttons row so it shows in both Visual and Text modes.
 	 */
-	function buildBar() {
-		if ( $( '#dresscode-bar' ).length ) {
+	function buildBar( editorId ) {
+		editorId = editorId || 'content';
+		var suffix = editorId === 'content' ? '' : '-' + editorId;
+		if ( $( '#dresscode-bar' + suffix ).length ) {
 			return;
 		}
 
-		$bar = $( '<span id="dresscode-bar" class="dresscode-bar" />' );
+		var $editorBar = $( '<span class="dresscode-bar" />' ).attr( 'id', 'dresscode-bar' + suffix );
 
 		var sel = $( '<select />' ).attr( {
-			id: 'dresscode-skill',
+			id: 'dresscode-skill' + suffix,
 			'class': 'dresscode-skill',
 			'title': CTAI.i18n.skillLabel,
+			'aria-label': CTAI.i18n.skillLabel,
 		} );
 
 		if ( CTAI.skills && CTAI.skills.length ) {
@@ -434,35 +456,39 @@
 		} else {
 			sel.append( $( '<option />' ).val( 0 ).text( CTAI.i18n.skillLabel ) );
 		}
-		$select = sel;
+		if ( editorId === 'content' ) {
+			$select = sel;
+		}
 
-		$btn = $( '<button type="button" />' ).attr( {
-			id: 'dresscode-btn',
+		var $editorButton = $( '<button type="button" />' ).attr( {
+			id: 'dresscode-btn' + suffix,
 			'class': 'button button-primary dresscode-btn',
 		} ).html( buttonHtml() );
 
-		$bar.append( sel ).append( $btn );
+		$editorBar.append( sel ).append( $editorButton );
 
-		var $target = $( '#wp-content-media-buttons' );
+		var $target = $( '#wp-' + editorId + '-media-buttons' );
 		if ( ! $target.length ) {
-			$target = $( '#wp-content-editor-tools' );
+			$target = $( '#wp-' + editorId + '-editor-tools' );
 		}
 		if ( $target.length ) {
-			$target.append( $bar );
+			$target.append( $editorBar );
 		} else {
 			// Fallback: float top-right of the editor container.
-			var $c = $( '#wp-content-editor-container' );
+			var $c = $( '#wp-' + editorId + '-editor-container' );
 			if ( ! $c.length ) {
-				$c = $( '#wp-content-wrap' );
+				$c = $( '#wp-' + editorId + '-wrap' );
 			}
 			if ( $c.length ) {
 				$c.css( 'position', 'relative' );
-				$c.append( $bar );
-				$bar.addClass( 'dresscode-floating' );
+				$c.append( $editorBar );
+				$editorBar.addClass( 'dresscode-floating' );
 			}
 		}
 
-		$btn.on( 'click', onOptimize );
+		$editorButton.on( 'click', function ( e ) {
+			onOptimize.call( this, e, editorId );
+		} );
 	}
 
 	function init() {
@@ -472,6 +498,9 @@
 		}
 		// WooCommerce product tabs (present even without the classic editor).
 		setupTabButtons();
+		if ( $( '#wb_tab_editor' ).length ) {
+			buildBar( 'wb_tab_editor' );
+		}
 	}
 
 	// Wait for the editor DOM, with retries for late-rendered editors.
@@ -481,7 +510,7 @@
 		if ( inited ) {
 			return;
 		}
-		if ( $( '#content' ).length || $( '#wp-content-media-buttons' ).length || $( '.wb_tab_main_inner' ).length ) {
+		if ( $( '#content' ).length || $( '#wp-content-media-buttons' ).length || $( '.wb_tab_main_inner' ).length || $( '#wb_tab_editor' ).length ) {
 			init();
 			inited = true;
 			return;
