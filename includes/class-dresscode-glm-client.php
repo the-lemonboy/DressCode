@@ -64,10 +64,10 @@ class DressCode_GLM_Client {
 	 */
 	public function __construct( $api_key = '', $endpoint = '', $model = '', $temperature = 0.3, $format = 'openai' ) {
 		$this->api_key     = $api_key;
-		$this->endpoint    = $endpoint ? $endpoint : 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+		$this->endpoint    = 'glm_coding' === $format ? 'https://open.bigmodel.cn/api/coding/paas/v4/chat/completions' : ( $endpoint ? $endpoint : 'https://open.bigmodel.cn/api/paas/v4/chat/completions' );
 		$this->model       = $model ? $model : 'glm-4.6';
 		$this->temperature = is_numeric( $temperature ) ? (float) $temperature : 0.3;
-		$this->format      = ( 'anthropic' === $format ) ? 'anthropic' : 'openai';
+		$this->format      = in_array( $format, array( 'openai', 'anthropic', 'glm_coding' ), true ) ? $format : 'openai';
 	}
 
 	/**

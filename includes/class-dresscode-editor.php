@@ -57,7 +57,11 @@ class DressCode_Editor {
 		$this->endpoint    = get_option( 'dresscode_glm_endpoint', 'https://open.bigmodel.cn/api/paas/v4/chat/completions' );
 		$this->model       = get_option( 'dresscode_glm_model', 'glm-4.6' );
 		$this->temperature = (float) get_option( 'dresscode_glm_temperature', 0.3 );
-		$this->format      = ( 'anthropic' === get_option( 'dresscode_glm_api_format', 'openai' ) ) ? 'anthropic' : 'openai';
+		$format            = get_option( 'dresscode_glm_api_format', 'openai' );
+		$this->format      = in_array( $format, array( 'openai', 'anthropic', 'glm_coding' ), true ) ? $format : 'openai';
+		if ( 'glm_coding' === $this->format ) {
+			$this->endpoint = 'https://open.bigmodel.cn/api/coding/paas/v4/chat/completions';
+		}
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ), 20, 1 );
 		add_action( 'wp_ajax_dresscode_optimize', array( $this, 'handle_optimize' ) );

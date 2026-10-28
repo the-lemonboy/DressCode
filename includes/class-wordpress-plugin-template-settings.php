@@ -203,18 +203,19 @@ class WordPress_Plugin_Template_Settings {
 				array(
 					'id'          => 'glm_api_format',
 					'label'       => __( 'API 格式', 'dresscode' ),
-					'description' => __( '按服务商选择：OpenAI 兼容（chat/completions）或 Anthropic Messages（/v1/messages）。', 'dresscode' ),
+					'description' => __( '选择 API 协议。GLM Coding Plan 使用固定的 Coding 接口地址，不使用下方接口地址。', 'dresscode' ),
 					'type'        => 'select',
 					'default'     => 'openai',
 					'options'     => array(
 						'openai'    => __( 'OpenAI 兼容 (chat/completions)', 'dresscode' ),
+						'glm_coding' => 'GLM Coding Plan (OpenAI Chat Completions)',
 						'anthropic' => __( 'Anthropic Messages (/v1/messages)', 'dresscode' ),
 					),
 				),
 				array(
 					'id'          => 'glm_endpoint',
 					'label'       => __( '接口地址', 'dresscode' ),
-					'description' => __( '完整端点 URL。OpenAI 格式如 https://open.bigmodel.cn/api/paas/v4/chat/completions；Anthropic 格式如 https://your-relay.com/v1/messages。', 'dresscode' ),
+					'description' => __( 'OpenAI 和 Anthropic 格式使用此完整端点 URL。GLM Coding Plan 自动使用 https://open.bigmodel.cn/api/coding/paas/v4/chat/completions。', 'dresscode' ),
 					'type'        => 'text',
 					'default'     => 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
 					'placeholder' => '',

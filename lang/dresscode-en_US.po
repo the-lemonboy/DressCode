@@ -17,6 +17,9 @@ msgstr "AI Optimize"
 msgid "AI 优化中…"
 msgstr "Optimizing…"
 
+msgid "AI 优化失败"
+msgstr "AI optimization failed"
+
 msgid "AI 生成超时（内容可能过长），请重试；若仍超时，可选中一部分内容分段优化。"
 msgstr "The AI request timed out (the content may be too long). Please retry; if it keeps timing out, select part of the content and optimize it in sections."
 
@@ -56,6 +59,9 @@ msgstr "ID"
 msgid "OpenAI 兼容 (chat/completions)"
 msgstr "OpenAI-compatible (chat/completions)"
 
+msgid "OpenAI 和 Anthropic 格式使用此完整端点 URL。GLM Coding Plan 自动使用 https://open.bigmodel.cn/api/coding/paas/v4/chat/completions。"
+msgstr "OpenAI and Anthropic formats use this full endpoint URL. GLM Coding Plan automatically uses https://open.bigmodel.cn/api/coding/paas/v4/chat/completions."
+
 msgid "SKILL.md（System Prompt）"
 msgstr "SKILL.md (System Prompt)"
 
@@ -80,8 +86,11 @@ msgstr "Import via zip upload"
 msgid "上传的 zip 文件无效。"
 msgstr "The uploaded zip file is invalid."
 
-msgid "优化失败"
-msgstr "Optimization failed"
+msgid "仍在优化中，内容较长时可能需要 1~3 分钟，请稍候…"
+msgstr "Still optimizing. Longer content may take 1–3 minutes; please wait…"
+
+msgid "优化失败（原因未知，请查看 DressCode → 设置中的最近失败记录）。"
+msgstr "Optimization failed. Check the latest failure in DressCode → Settings."
 
 msgid "优化完成"
 msgstr "Optimization complete"
@@ -116,11 +125,8 @@ msgstr "API key from open.bigmodel.cn, shown masked in a password field; overwri
 msgid "如 glm-4.6、glm-4.5、glm-4-plus 等，按账号可用模型填写。"
 msgstr "e.g. glm-4.6, glm-4.5, glm-4-plus — use a model available to your account."
 
-msgid "完整端点 URL。OpenAI 格式如 https://open.bigmodel.cn/api/paas/v4/chat/completions；Anthropic 格式如 https://your-relay.com/v1/messages。"
-msgstr "Full endpoint URL. OpenAI format e.g. https://open.bigmodel.cn/api/paas/v4/chat/completions; Anthropic format e.g. https://your-relay.com/v1/messages."
-
-msgid "按服务商选择：OpenAI 兼容（chat/completions）或 Anthropic Messages（/v1/messages）。"
-msgstr "Choose per your provider: OpenAI-compatible (chat/completions) or Anthropic Messages (/v1/messages)."
+msgid "安全校验已过期（页面打开时间过长），请刷新页面后重试。"
+msgstr "Security verification expired. Refresh the page and try again."
 
 msgid "接口地址"
 msgstr "Endpoint URL"
@@ -152,6 +158,9 @@ msgstr "Unable to initialize the filesystem."
 msgid "暂无 Skill，请新增或导入。"
 msgstr "No skills yet — add or import one."
 
+msgid "最近一次 AI 优化失败："
+msgstr "Latest AI optimization failure:"
+
 msgid "未上传 zip 时，以此文本作为 SKILL.md 内容保存。可选附带 references/*.md（在 zip 内）。"
 msgstr "When no zip is uploaded, this text is saved as SKILL.md. Optionally include references/*.md inside the zip."
 
@@ -182,6 +191,12 @@ msgstr "Use this skill when nothing is selected in the editor AI dropdown"
 msgid "编辑器内容为空，无内容可优化。"
 msgstr "The editor is empty — nothing to optimize."
 
+msgid "网关/服务器超时（HTTP %s）。内容可能过长或模型响应超时，可选中部分内容分段优化。"
+msgstr "Gateway or server timeout (HTTP %s). Try optimizing a shorter selection."
+
+msgid "网络错误或请求被中断（HTTP 0）。请检查服务器能否访问设置中的接口地址。"
+msgstr "Network error or interrupted request (HTTP 0). Check that the server can reach the configured endpoint."
+
 msgid "设为默认"
 msgstr "Set as default"
 
@@ -191,11 +206,17 @@ msgstr "Settings"
 msgid "请上传 zip，或填写 SKILL.md 内容。"
 msgstr "Upload a zip, or fill in the SKILL.md content."
 
+msgid "请求失败（HTTP %s）"
+msgstr "Request failed (HTTP %s)"
+
 msgid "返回"
 msgstr "Back"
 
 msgid "这些文件会自动拼接到 System Prompt 末尾。仅 zip 导入可带入。"
 msgstr "These files are appended to the system prompt automatically. They can only be brought in via zip import."
+
+msgid "选择 API 协议。GLM Coding Plan 使用固定的 Coding 接口地址，不使用下方接口地址。"
+msgstr "Choose the API protocol. GLM Coding Plan uses its fixed Coding endpoint instead of the endpoint below."
 
 msgid "配置智谱 GLM（BigModel）API。API Key 优先在此填写。"
 msgstr "Configure the Zhipu GLM (BigModel) API. Set the API key here."
