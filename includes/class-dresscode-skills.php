@@ -79,7 +79,7 @@ class DressCode_Skills {
 	 * whenever the stored version is older, so file-only updates do not
 	 * require re-activating the plugin.
 	 */
-	const DB_VERSION = '5';
+	const DB_VERSION = '7';
 
 	/**
 	 * Run the upgrade (schema + migration + seed) if needed.
@@ -100,13 +100,39 @@ class DressCode_Skills {
 		if ( version_compare( $current, '3', '>=' ) && ! $this->update_unmodified_pdp_skill() ) {
 			return;
 		}
+		if ( ! $this->localize_pdp_skill_metadata() ) {
+			return;
+		}
 		update_option( 'dresscode_db_version', self::DB_VERSION );
+	}
+
+	/** Rename the original built-in entry without changing customized entries. */
+	protected function localize_pdp_skill_metadata() {
+		global $wpdb;
+		$result = $wpdb->update(
+			$this->table,
+			array( 'name' => '商品页样式优化', 'description' => '优化商品详情页的排版、表格和资源链接样式，适配桌面及移动端。' ),
+			array( 'name' => 'CamThink PDP', 'description' => 'CamThink product detail styling' ),
+			array( '%s', '%s' ),
+			array( '%s', '%s' )
+		);
+		if ( false === $result ) {
+			return false;
+		}
+		$result = $wpdb->update(
+			$this->table,
+			array( 'name' => '商品页样式优化' ),
+			array( 'name' => 'CamThink 商品详情页样式优化', 'description' => '优化商品详情页的排版、表格和资源链接样式，适配桌面及移动端。' ),
+			array( '%s' ),
+			array( '%s', '%s' )
+		);
+		return false !== $result;
 	}
 
 	/** Update only the previously bundled prompt; preserve user edits. */
 	protected function update_unmodified_pdp_skill() {
 		global $wpdb;
-		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT folder FROM {$this->table} WHERE name = %s", 'CamThink PDP' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT folder FROM {$this->table} WHERE name IN (%s, %s)", 'CamThink PDP', '商品页样式优化' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$source = dirname( __DIR__ ) . '/assets/skills/camthink-pdp/SKILL.md';
 		$prompt = is_readable( $source ) ? file_get_contents( $source ) : false;
 		if ( false === $prompt ) {
@@ -141,7 +167,7 @@ class DressCode_Skills {
 		$now = current_time( 'mysql' );
 		$inserted = $wpdb->insert(
 			$this->table,
-			array( 'name' => 'CamThink PDP', 'description' => 'CamThink product detail styling', 'system_prompt' => '', 'folder' => $slug, 'is_default' => 0, 'created_at' => $now, 'updated_at' => $now ),
+			array( 'name' => '商品页样式优化', 'description' => '优化商品详情页的排版、表格和资源链接样式，适配桌面及移动端。', 'system_prompt' => '', 'folder' => $slug, 'is_default' => 0, 'created_at' => $now, 'updated_at' => $now ),
 			array( '%s', '%s', '%s', '%s', '%d', '%s', '%s' )
 		);
 		if ( false === $inserted ) {
