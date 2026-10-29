@@ -80,8 +80,14 @@ msgstr "Temperature"
 msgid "zip 内须含 SKILL.md（可在根目录，或单个子文件夹下）。上传后将以此 zip 内容创建/替换 Skill 文件夹，下面的 SKILL.md 文本框会被忽略。"
 msgstr "The zip must contain a SKILL.md (at the archive root, or inside a single subfolder). Uploading creates/replaces the skill folder with the zip contents; the SKILL.md text box below is then ignored."
 
+msgid "上传 Skill 文件夹"
+msgstr "Upload skill folder"
+
 msgid "上传 zip 导入"
 msgstr "Import via zip upload"
+
+msgid "上传文件数量不完整，请检查服务器的 max_file_uploads 限制，或使用 ZIP 导入。"
+msgstr "Some files were not uploaded. Check the server max_file_uploads limit or use ZIP import."
 
 msgid "上传的 zip 文件无效。"
 msgstr "The uploaded zip file is invalid."
@@ -94,6 +100,9 @@ msgstr "Optimization failed. Check the latest failure in DressCode → Settings.
 
 msgid "优化完成"
 msgstr "Optimization complete"
+
+msgid "优化期间内容已发生变化，结果未覆盖原内容。请重新优化。"
+msgstr "The content changed during optimization, so the result was not applied. Please try again."
 
 msgid "你是 HTML 样式优化助手。请严格按照系统消息中的规范，优化下面这段 HTML 的样式与结构：保留语义化标签与原有内容文字，补充必要的内联样式或 CSS 变量，使其符合品牌视觉标准。只输出优化后的完整 HTML 代码片段，不要任何解释说明，不要使用 markdown 代码围栏（```）。需要优化的 HTML 如下："
 msgstr "You are an HTML styling assistant. Strictly following the rules in the system message, optimize the style and structure of the HTML below: keep the semantic tags and the original text, and add inline styles or CSS variables as needed to match the brand visual standard. Output only the complete optimized HTML fragment — no explanations, no markdown code fences. The HTML to optimize is as follows:"
@@ -137,11 +146,20 @@ msgstr "Description"
 msgid "操作"
 msgstr "Actions"
 
+msgid "文件上传失败或包含多个根文件夹。"
+msgstr "A file upload failed or multiple root folders were supplied."
+
 msgid "文件夹"
 msgstr "Folder"
 
 msgid "文件夹名（slug）创建后不可更改；上传 zip 会替换其内容。"
 msgstr "The folder slug cannot be changed after creation; uploading a zip replaces its contents."
+
+msgid "文件夹根目录必须包含 SKILL.md。"
+msgstr "The folder root must contain SKILL.md."
+
+msgid "文件夹路径无效。"
+msgstr "Invalid folder path."
 
 msgid "新增 / 导入 Skill"
 msgstr "Add / Import Skill"
@@ -152,8 +170,17 @@ msgstr "Invalid request."
 msgid "无权限。"
 msgstr "Permission denied."
 
+msgid "无法保存上传的文件。"
+msgstr "Could not save an uploaded file."
+
+msgid "无法创建临时文件夹。"
+msgstr "Could not create a temporary folder."
+
 msgid "无法初始化文件系统。"
 msgstr "Unable to initialize the filesystem."
+
+msgid "无法替换现有 Skill 文件夹。"
+msgstr "Could not replace the existing skill folder."
 
 msgid "暂无 Skill，请新增或导入。"
 msgstr "No skills yet — add or import one."
@@ -161,8 +188,8 @@ msgstr "No skills yet — add or import one."
 msgid "最近一次 AI 优化失败："
 msgstr "Latest AI optimization failure:"
 
-msgid "未上传 zip 时，以此文本作为 SKILL.md 内容保存。可选附带 references/*.md（在 zip 内）。"
-msgstr "When no zip is uploaded, this text is saved as SKILL.md. Optionally include references/*.md inside the zip."
+msgid "未导入 ZIP 或文件夹时，以此文本保存 SKILL.md。"
+msgstr "When no ZIP or folder is imported, this text is saved as SKILL.md."
 
 msgid "未能创建 Skill 文件夹。"
 msgstr "Could not create the skill folder."
@@ -176,8 +203,11 @@ msgstr "No GLM API key configured — please fill it in under DressCode → Sett
 msgid "模型"
 msgstr "Model"
 
-msgid "每个 Skill 是一个独立文件夹（含 SKILL.md，可选 references/*.md）。可手写或上传 zip 导入。AI 按选中的 Skill 优化编辑器里的 HTML。"
-msgstr "Each skill is a standalone folder (with a SKILL.md and optional references/*.md). Write it by hand or import a zip. The AI optimizes the editor HTML according to the selected skill."
+msgid "每个 Skill 是一个包含 SKILL.md 的文件夹。可编辑或导入 ZIP / 文件夹，AI 会读取其中所有 Markdown 文件。"
+msgstr "Each skill is a folder containing SKILL.md. Edit or import a ZIP or folder; the AI reads all Markdown files in it."
+
+msgid "浏览器未提供文件夹路径，请改用 ZIP 导入。"
+msgstr "Folder paths are unavailable. Use ZIP import instead."
 
 msgid "编辑"
 msgstr "Edit"
@@ -206,17 +236,23 @@ msgstr "Settings"
 msgid "请上传 zip，或填写 SKILL.md 内容。"
 msgstr "Upload a zip, or fill in the SKILL.md content."
 
+msgid "请只选择 ZIP 或文件夹中的一种。"
+msgstr "Choose either a ZIP or a folder, not both."
+
 msgid "请求失败（HTTP %s）"
 msgstr "Request failed (HTTP %s)"
 
 msgid "返回"
 msgstr "Back"
 
-msgid "这些文件会自动拼接到 System Prompt 末尾。仅 zip 导入可带入。"
-msgstr "These files are appended to the system prompt automatically. They can only be brought in via zip import."
+msgid "这些 Markdown 文件会自动拼接到 System Prompt 末尾。"
+msgstr "These Markdown files are automatically appended to the system prompt."
 
 msgid "选择 API 协议。GLM Coding Plan 使用固定的 Coding 接口地址，不使用下方接口地址。"
 msgstr "Choose the API protocol. GLM Coding Plan uses its fixed Coding endpoint instead of the endpoint below."
+
+msgid "选择包含 SKILL.md 的文件夹。将导入其中所有 Markdown 文件及目录结构；其他文件不会导入。请勿同时选择 ZIP。"
+msgstr "Select a folder containing SKILL.md. All Markdown files and their directory structure will be imported; other files will be skipped. Do not select a ZIP at the same time."
 
 msgid "配置智谱 GLM（BigModel）API。API Key 优先在此填写。"
 msgstr "Configure the Zhipu GLM (BigModel) API. Set the API key here."

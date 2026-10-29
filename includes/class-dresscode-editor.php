@@ -136,6 +136,7 @@ class DressCode_Editor {
 					'errorTitle'     => __( 'AI 优化失败', 'dresscode' ),
 					'noKey'          => __( '未配置 GLM API Key，请到 DressCode → 设置中填写。', 'dresscode' ),
 					'empty'          => __( '编辑器内容为空，无内容可优化。', 'dresscode' ),
+					'contentChanged' => __( '优化期间内容已发生变化，结果未覆盖原内容。请重新优化。', 'dresscode' ),
 					'stillWorking'   => __( '仍在优化中，内容较长时可能需要 1~3 分钟，请稍候…', 'dresscode' ),
 					'nonceExpired'   => __( '安全校验已过期（页面打开时间过长），请刷新页面后重试。', 'dresscode' ),
 					'networkError'   => __( '网络错误或请求被中断（HTTP 0）。请检查服务器能否访问设置中的接口地址。', 'dresscode' ),

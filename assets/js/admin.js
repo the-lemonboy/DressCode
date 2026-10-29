@@ -22,7 +22,6 @@
 	}
 
 	var $select;
-	var busy = false;
 
 	/**
 	 * Get the requested TinyMCE editor instance (main content by default).
@@ -54,9 +53,12 @@
 			var sel = '';
 			try { sel = ed.selection.getContent( { format: 'html' } ); } catch ( e ) {}
 			if ( sel && sel.trim() ) {
-				return { mode: 'visual', has: true, selected: sel };
+				var bookmark = null;
+				try { bookmark = ed.selection.getBookmark( 2, true ); } catch ( e ) {}
+				return { mode: 'visual', has: true, selected: sel, full: ed.getContent(), bookmark: bookmark };
 			}
-			return { mode: 'visual', has: false, selected: ed.getContent() };
+			var content = ed.getContent();
+			return { mode: 'visual', has: false, selected: content, full: content };
 		}
 
 		var el = document.getElementById( editorId );
@@ -85,6 +87,9 @@
 		var ed = getEditor( editorId );
 		if ( ctx.mode === 'visual' && ed ) {
 			if ( ctx.has ) {
+				if ( ctx.bookmark ) {
+					ed.selection.moveToBookmark( ctx.bookmark );
+				}
 				ed.selection.setContent( html );
 			} else {
 				ed.setContent( html );
@@ -260,17 +265,17 @@
 
 	/**
 	 * Shared request flow: optimize `content` via AJAX, then hand the
-	 * optimized HTML to `applyFn`. One request at a time.
+	 * optimized HTML to `applyFn`. Each button tracks its own request.
 	 */
 	function sendAndApply( content, applyFn, $button ) {
 		if ( ! CTAI.hasApiKey ) {
 			showError( CTAI.i18n.noKey );
 			return;
 		}
-		if ( busy ) {
+		if ( $button.data( 'dresscode-busy' ) ) {
 			return;
 		}
-		busy = true;
+		$button.data( 'dresscode-busy', true );
 		setLoading( true, $button );
 
 		// Reasoning models can legitimately take minutes; ping the user so a
@@ -288,7 +293,6 @@
 			skill_id: currentSkillId( $button )
 		} ).done( function ( res ) {
 			if ( res && res.success && res.data && res.data.html ) {
-				clearError();
 				if ( applyFn( res.data.html ) !== false ) {
 					toast( CTAI.i18n.done, false );
 				}
@@ -305,7 +309,7 @@
 			pings.forEach( function ( id ) {
 				clearTimeout( id );
 			} );
-			busy = false;
+			$button.removeData( 'dresscode-busy' );
 			setLoading( false, $button );
 		} );
 	}
@@ -333,6 +337,11 @@
 			if ( editorId === 'wb_tab_editor' &&
 				( ! $button.closest( '.wb_cptb_tab_edit_popup' ).is( ':visible' ) ||
 					$save.data( 'target-tab' ) !== targetTab ) ) {
+				return false;
+			}
+			var current = getContent( editorId );
+			if ( ! current || current.full !== ctx.full ) {
+				showError( CTAI.i18n.contentChanged );
 				return false;
 			}
 			applyResult( ctx, html );
@@ -368,6 +377,10 @@
 		}
 
 		sendAndApply( selected, function ( html ) {
+			if ( ! document.documentElement.contains( ta ) || ta.value !== val ) {
+				showError( CTAI.i18n.contentChanged );
+				return false;
+			}
 			if ( has ) {
 				$( ta ).val( val.substring( 0, start ) + html + val.substring( end ) );
 			} else {

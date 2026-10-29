@@ -258,7 +258,7 @@ class DressCode_Skills {
 	}
 
 	/**
-	 * List reference .md files inside a skill folder.
+	 * List Markdown reference files throughout a skill folder.
 	 *
 	 * @param string $slug Skill folder slug.
 	 * @return string[] Relative paths (e.g. "references/ui.md").
@@ -272,21 +272,16 @@ class DressCode_Skills {
 		if ( ! $slug || ! is_dir( $dir ) ) {
 			return $files;
 		}
-		// references/*.md
-		$refs = glob( trailingslashit( $dir ) . 'references/*.md' );
-		if ( $refs ) {
-			foreach ( $refs as $f ) {
-				$files[] = ltrim( str_replace( $dir, '', wp_normalize_path( $f ) ), '/' );
+		$iterator = new RecursiveIteratorIterator(
+			new RecursiveDirectoryIterator( $dir, FilesystemIterator::SKIP_DOTS )
+		);
+		foreach ( $iterator as $file ) {
+			if ( $file->isLink() || ! $file->isFile() || 'md' !== strtolower( $file->getExtension() ) ) {
+				continue;
 			}
-		}
-		// any other top-level .md besides SKILL.md (case-insensitive, Windows FS)
-		$others = glob( trailingslashit( $dir ) . '*.md' );
-		if ( $others ) {
-			foreach ( $others as $f ) {
-				$rel = ltrim( str_replace( $dir, '', wp_normalize_path( $f ) ), '/' );
-				if ( 'skill.md' !== strtolower( $rel ) ) {
-					$files[] = $rel;
-				}
+			$rel = ltrim( substr( wp_normalize_path( $file->getPathname() ), strlen( $dir ) ), '/' );
+			if ( 'skill.md' !== strtolower( $rel ) ) {
+				$files[] = $rel;
 			}
 		}
 		sort( $files );
@@ -626,7 +621,7 @@ PROMPT;
 		echo '<div class="wrap" id="dresscode-skills-page">';
 		echo '<h1>' . esc_html__( 'DressCode Skills', 'dresscode' ) . ' ';
 		echo '<a class="page-title-action" href="' . esc_url( $this->edit_url( 0 ) ) . '">' . esc_html__( '新增 / 导入 Skill', 'dresscode' ) . '</a></h1>';
-		echo '<p>' . esc_html__( '每个 Skill 是一个独立文件夹（含 SKILL.md，可选 references/*.md）。可手写或上传 zip 导入。AI 按选中的 Skill 优化编辑器里的 HTML。', 'dresscode' ) . '</p>';
+		echo '<p>' . esc_html__( '每个 Skill 是一个包含 SKILL.md 的文件夹。可编辑或导入 ZIP / 文件夹，AI 会读取其中所有 Markdown 文件。', 'dresscode' ) . '</p>';
 
 		if ( 'edit' === $action ) {
 			$this->render_edit_form( $id );
@@ -722,10 +717,15 @@ PROMPT;
 		echo '<tr><th scope="row"><label for="dresscode_skill_zip">' . esc_html__( '上传 zip 导入', 'dresscode' ) . '</label></th>';
 		echo '<td><input name="skill_zip" id="dresscode_skill_zip" type="file" accept=".zip,application/zip,application/x-zip-compressed" />';
 		echo '<p class="description">' . esc_html__( 'zip 内须含 SKILL.md（可在根目录，或单个子文件夹下）。上传后将以此 zip 内容创建/替换 Skill 文件夹，下面的 SKILL.md 文本框会被忽略。', 'dresscode' ) . '</p></td></tr>';
+		echo '<tr><th scope="row"><label for="dresscode_skill_folder">' . esc_html__( '上传 Skill 文件夹', 'dresscode' ) . '</label></th>';
+		echo '<td><input name="skill_files[]" id="dresscode_skill_folder" type="file" webkitdirectory directory multiple onchange="this.form.elements.skill_file_count.value=this.files.length;this.form.elements.skill_file_paths.value=JSON.stringify(Array.from(this.files,function(f){return f.webkitRelativePath}))" />';
+		echo '<input type="hidden" name="skill_file_count" value="0" />';
+		echo '<input type="hidden" name="skill_file_paths" value="" />';
+		echo '<p class="description">' . esc_html__( '选择包含 SKILL.md 的文件夹。将导入其中所有 Markdown 文件及目录结构；其他文件不会导入。请勿同时选择 ZIP。', 'dresscode' ) . '</p></td></tr>';
 
 		echo '<tr><th scope="row"><label for="dresscode_skill_prompt">' . esc_html__( 'SKILL.md（System Prompt）', 'dresscode' ) . '</label></th>';
 		echo '<td><textarea name="system_prompt" id="dresscode_skill_prompt" rows="18" class="large-text code">' . esc_textarea( $skill_md ) . '</textarea>';
-		echo '<p class="description">' . esc_html__( '未上传 zip 时，以此文本作为 SKILL.md 内容保存。可选附带 references/*.md（在 zip 内）。', 'dresscode' ) . '</p></td></tr>';
+		echo '<p class="description">' . esc_html__( '未导入 ZIP 或文件夹时，以此文本保存 SKILL.md。', 'dresscode' ) . '</p></td></tr>';
 
 		if ( $refs ) {
 			echo '<tr><th scope="row">' . esc_html__( '参考文件', 'dresscode' ) . '</th>';
@@ -733,7 +733,7 @@ PROMPT;
 			foreach ( $refs as $rel ) {
 				echo '<li><code>' . esc_html( $rel ) . '</code></li>';
 			}
-			echo '</ul><p class="description">' . esc_html__( '这些文件会自动拼接到 System Prompt 末尾。仅 zip 导入可带入。', 'dresscode' ) . '</p></td></tr>';
+			echo '</ul><p class="description">' . esc_html__( '这些 Markdown 文件会自动拼接到 System Prompt 末尾。', 'dresscode' ) . '</p></td></tr>';
 		}
 
 		echo '<tr><th scope="row">' . esc_html__( '设为默认', 'dresscode' ) . '</th>';
@@ -785,8 +785,33 @@ PROMPT;
 		$zip_error = '';
 
 		$has_zip = isset( $_FILES['skill_zip'] ) && ! empty( $_FILES['skill_zip']['name'] ) && UPLOAD_ERR_OK === (int) $_FILES['skill_zip']['error'];
+		$has_folder = isset( $_FILES['skill_files']['name'][0] ) && '' !== $_FILES['skill_files']['name'][0];
+		if ( $has_folder && $has_zip ) {
+			wp_die( esc_html__( '请只选择 ZIP 或文件夹中的一种。', 'dresscode' ) );
+		}
+		if ( $id ) {
+			$existing_skill = $this->get_skill( $id );
+			if ( ! $existing_skill || $existing_folder !== $existing_skill->folder ) {
+				wp_die( esc_html__( '无效请求。', 'dresscode' ) );
+			}
+		} else {
+			$existing_folder = '';
+			$folder = '';
+		}
 
-		if ( $has_zip ) {
+		if ( $has_folder ) {
+			if ( ! isset( $_POST['skill_file_count'] ) || (int) $_POST['skill_file_count'] !== count( $_FILES['skill_files']['name'] ) ) {
+				wp_die( esc_html__( '上传文件数量不完整，请检查服务器的 max_file_uploads 限制，或使用 ZIP 导入。', 'dresscode' ) );
+			}
+			$upload = $_FILES['skill_files'];
+			if ( ! isset( $upload['full_path'] ) && isset( $_POST['skill_file_paths'] ) ) {
+				$upload['full_path'] = json_decode( wp_unslash( $_POST['skill_file_paths'] ), true );
+			}
+			$folder = $this->import_skill_folder( $upload, $name, $existing_folder );
+			if ( is_wp_error( $folder ) ) {
+				wp_die( esc_html( $folder->get_error_message() ) );
+			}
+		} elseif ( $has_zip ) {
 			$slug_or_error = $this->extract_skill_zip( $_FILES['skill_zip']['tmp_name'], $name, $existing_folder ); // phpcs:ignore
 			if ( is_wp_error( $slug_or_error ) ) {
 				$zip_error = $slug_or_error->get_error_message();
@@ -857,6 +882,72 @@ PROMPT;
 		}
 		wp_safe_redirect( $redirect );
 		exit;
+	}
+
+	/** Import Markdown files from a browser directory upload. */
+	protected function import_skill_folder( $upload, $name, $existing_folder ) {
+		$paths = isset( $upload['full_path'] ) ? $upload['full_path'] : array();
+		if ( ! is_array( $paths ) || count( $paths ) !== count( $upload['name'] ) ) {
+			return new WP_Error( 'folder_paths', __( '浏览器未提供文件夹路径，请改用 ZIP 导入。', 'dresscode' ) );
+		}
+		$tmp = trailingslashit( $this->skills_dir() ) . '_import_' . wp_generate_password( 16, false );
+		if ( ! wp_mkdir_p( $tmp ) ) {
+			return new WP_Error( 'folder_create', __( '无法创建临时文件夹。', 'dresscode' ) );
+		}
+		$root = null;
+		$skill_found = false;
+		$error = '';
+		foreach ( $paths as $i => $path ) {
+			$path = str_replace( '\\', '/', $path );
+			$parts = explode( '/', $path );
+			if ( count( $parts ) < 2 || in_array( '', $parts, true ) || in_array( '.', $parts, true ) || in_array( '..', $parts, true ) || preg_match( '/[\x00-\x1f:]/', $path ) ) {
+				$error = __( '文件夹路径无效。', 'dresscode' );
+				break;
+			}
+			$top = array_shift( $parts );
+			if ( null === $root ) {
+				$root = $top;
+			}
+			if ( $root !== $top || UPLOAD_ERR_OK !== (int) $upload['error'][ $i ] ) {
+				$error = __( '文件上传失败或包含多个根文件夹。', 'dresscode' );
+				break;
+			}
+			$rel = implode( '/', $parts );
+			if ( 'md' !== strtolower( pathinfo( $rel, PATHINFO_EXTENSION ) ) ) {
+				continue;
+			}
+			if ( 'SKILL.md' === $rel ) {
+				$skill_found = true;
+			}
+			$dest = trailingslashit( $tmp ) . $rel;
+			if ( file_exists( $dest ) || ! wp_mkdir_p( dirname( $dest ) ) || ! move_uploaded_file( $upload['tmp_name'][ $i ], $dest ) ) {
+				$error = __( '无法保存上传的文件。', 'dresscode' );
+				break;
+			}
+		}
+		if ( ! $error && ! $skill_found ) {
+			$error = __( '文件夹根目录必须包含 SKILL.md。', 'dresscode' );
+		}
+		if ( $error ) {
+			$this->rrmdir( $tmp );
+			return new WP_Error( 'folder_import', $error );
+		}
+		$slug = $existing_folder ? $existing_folder : $this->unique_slug( $name );
+		$final = $this->folder_path( $slug );
+		$backup = $tmp . '_backup';
+		if ( is_dir( $final ) && ! rename( $final, $backup ) ) {
+			$this->rrmdir( $tmp );
+			return new WP_Error( 'folder_replace', __( '无法替换现有 Skill 文件夹。', 'dresscode' ) );
+		}
+		if ( ! rename( $tmp, $final ) ) {
+			if ( is_dir( $backup ) ) {
+				rename( $backup, $final );
+			}
+			$this->rrmdir( $tmp );
+			return new WP_Error( 'folder_replace', __( '无法替换现有 Skill 文件夹。', 'dresscode' ) );
+		}
+		$this->rrmdir( $backup );
+		return $slug;
 	}
 
 	/**
