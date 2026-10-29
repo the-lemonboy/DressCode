@@ -299,7 +299,7 @@
 					if ( ! res || ! res.success || ! res.data || res.data.status === 'done' ) {
 						completed.resolve( res );
 					} else if ( res.data.status === 'queued' || res.data.status === 'running' ) {
-						setTimeout( function () { poll( id ); }, 2000 );
+						setTimeout( function () { poll( id ); }, 5000 );
 					} else {
 						completed.resolve( { success: false, data: CTAI.i18n.jobExpired } );
 					}
