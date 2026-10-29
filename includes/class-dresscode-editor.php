@@ -234,6 +234,22 @@ class DressCode_Editor {
 		// atomic database lock, so the same task cannot run twice.
 		wp_schedule_single_event( time() + 20, 'dresscode_run_job', array( $id ) );
 		wp_schedule_single_event( time() + 2 * HOUR_IN_SECONDS, 'dresscode_cleanup_job', array( $id ) );
+		// PHP-FPM can finish the short browser response before running the job.
+		// This avoids making a loopback request inside the creation request.
+		if ( PHP_SAPI === 'fpm-fcgi' && function_exists( 'fastcgi_finish_request' ) && ! headers_sent() ) {
+			status_header( 200 );
+			nocache_headers();
+			header( 'Content-Type: application/json; charset=' . get_option( 'blog_charset' ) );
+			echo wp_json_encode( array( 'success' => true, 'data' => array( 'job_id' => $id, 'status' => 'queued' ) ) );
+			// A session lock held by another plugin must not block status polls.
+			if ( function_exists( 'session_status' ) && session_status() === PHP_SESSION_ACTIVE ) {
+				session_write_close();
+			}
+			ignore_user_abort( true );
+			fastcgi_finish_request();
+			$this->run_job( $id );
+			exit;
+		}
 		$this->dispatch_job( $id );
 		wp_send_json_success( array( 'job_id' => $id, 'status' => 'queued' ) );
 	}
