@@ -210,7 +210,9 @@ class WordPress_Plugin_Template {
 	 * @since   1.0.0
 	 */
 	public function enqueue_styles() {
-		wp_register_style( $this->_token . '-frontend', esc_url( $this->assets_url ) . 'css/frontend.css', array(), $this->_version );
+		$css_path = dirname( __DIR__ ) . '/assets/css/frontend.css';
+		$version  = file_exists( $css_path ) ? filemtime( $css_path ) : $this->_version;
+		wp_register_style( $this->_token . '-frontend', esc_url( $this->assets_url ) . 'css/frontend.css', array(), $version );
 		wp_enqueue_style( $this->_token . '-frontend' );
 	} // End enqueue_styles ()
 
@@ -337,8 +339,7 @@ class WordPress_Plugin_Template {
 		// Create the skills table, migrate legacy rows to folders, seed default.
 		if ( class_exists( 'DressCode_Skills' ) ) {
 			$skills = new DressCode_Skills();
-			$skills->upgrade();
-			update_option( 'dresscode_db_version', DressCode_Skills::DB_VERSION );
+			$skills->maybe_upgrade();
 		}
 	} // End install ()
 
