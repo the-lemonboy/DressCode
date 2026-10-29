@@ -212,6 +212,8 @@ class DressCode_Editor {
 			// Last-resort fallback prompt.
 			$system_prompt = __( '你是 HTML 样式优化助手。请优化用户提供的 HTML，使其语义清晰、样式规范、响应式，只输出优化后的完整 HTML 片段，不要解释、不要 markdown 围栏。', 'dresscode' );
 		}
+		// Resolve site-local static icons for skills that use the token.
+		$system_prompt = str_replace( '{{DRESSCODE_ICON_BASE_URL}}', plugin_dir_url( dirname( __DIR__ ) . '/dresscode.php' ) . 'assets/icons', $system_prompt );
 
 		$client  = new DressCode_GLM_Client( $this->api_key, $this->endpoint, $this->model, $this->temperature, $this->format );
 		$result  = $client->optimize( $this->pre_clean( $content ), $system_prompt );
