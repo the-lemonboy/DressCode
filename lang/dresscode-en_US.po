@@ -23,8 +23,8 @@ msgstr "AI optimization failed"
 msgid "AI 处理"
 msgstr "AI"
 
-msgid "AI 生成超时（内容可能过长），请重试；若仍超时，可选中一部分内容分段优化。"
-msgstr "The AI request timed out (the content may be too long). Please retry; if it keeps timing out, select part of the content and optimize it in sections."
+msgid "AI 接口请求超时，请检查接口状态和服务器网络后重试。"
+msgstr "The AI API request timed out. Check the service and server network, then retry."
 
 msgid "API 格式"
 msgstr "API Format"
@@ -134,6 +134,18 @@ msgstr "Name"
 msgid "名称不能为空。"
 msgstr "The name cannot be empty."
 
+msgid "后台任务无效或已过期。"
+msgstr "The background task is invalid or has expired."
+
+msgid "后台任务未完成或已过期。请检查服务器后台任务和网络后重试。"
+msgstr "The background task did not finish or has expired. Check the server background worker and network, then retry."
+
+msgid "后台任务未能启动。请检查 WordPress 回环请求和定时任务配置。"
+msgstr "The background task did not start. Check WordPress loopback requests and scheduled tasks."
+
+msgid "后台优化发生错误，请检查服务器日志。"
+msgstr "The background optimization failed. Check the server logs."
+
 msgid "在 open.bigmodel.cn 获取的 API Key，以密码框掩码显示；如需更换直接覆盖。"
 msgstr "API key from open.bigmodel.cn, shown masked in a password field; overwrite it to replace."
 
@@ -181,6 +193,9 @@ msgstr "Could not save an uploaded file."
 
 msgid "无法创建临时文件夹。"
 msgstr "Could not create a temporary folder."
+
+msgid "无法创建后台任务，请稍后重试。"
+msgstr "Could not create the background task. Please try again."
 
 msgid "无法初始化文件系统。"
 msgstr "Unable to initialize the filesystem."

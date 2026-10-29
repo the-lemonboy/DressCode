@@ -11,24 +11,24 @@ msgstr ""
 msgid "0~2，越小越稳定，建议 0.2~0.5。"
 msgstr ""
 
-#: class-dresscode-editor.php:132
+#: class-dresscode-editor.php:138
 msgid "AI 优化"
 msgstr ""
 
-#: class-dresscode-editor.php:133
+#: class-dresscode-editor.php:139
 msgid "AI 优化中…"
 msgstr ""
 
-#: class-dresscode-editor.php:138
+#: class-dresscode-editor.php:144
 msgid "AI 优化失败"
 msgstr ""
 
-#: class-dresscode-editor.php:136
+#: class-dresscode-editor.php:142
 msgid "AI 处理"
 msgstr ""
 
-#: class-dresscode-editor.php:242
-msgid "AI 生成超时（内容可能过长），请重试；若仍超时，可选中一部分内容分段优化。"
+#: class-dresscode-editor.php:339
+msgid "AI 接口请求超时，请检查接口状态和服务器网络后重试。"
 msgstr ""
 
 #: class-wordpress-plugin-template-settings.php:205
@@ -39,12 +39,12 @@ msgstr ""
 msgid "Anthropic Messages (/v1/messages)"
 msgstr ""
 
-#: class-dresscode-skills.php:618
-#: class-dresscode-skills.php:619
+#: class-dresscode-skills.php:680
+#: class-dresscode-skills.php:681
 msgid "DressCode"
 msgstr ""
 
-#: class-dresscode-skills.php:657
+#: class-dresscode-skills.php:719
 msgid "DressCode Skills"
 msgstr ""
 
@@ -53,7 +53,7 @@ msgstr ""
 msgid "DressCode 设置"
 msgstr ""
 
-#: class-dresscode-skills.php:510
+#: class-dresscode-skills.php:572
 msgid "DressCode 通用规范"
 msgstr ""
 
@@ -73,7 +73,7 @@ msgstr ""
 msgid "GLM 接口配置"
 msgstr ""
 
-#: class-dresscode-skills.php:680
+#: class-dresscode-skills.php:742
 msgid "ID"
 msgstr ""
 
@@ -85,7 +85,7 @@ msgstr ""
 msgid "OpenAI 和 Anthropic 格式使用此完整端点 URL。GLM Coding Plan 自动使用 https://open.bigmodel.cn/api/coding/paas/v4/chat/completions。"
 msgstr ""
 
-#: class-dresscode-skills.php:761
+#: class-dresscode-skills.php:823
 msgid "SKILL.md（System Prompt）"
 msgstr ""
 
@@ -93,12 +93,12 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: class-dresscode-editor.php:148
+#: class-dresscode-editor.php:155
 msgid "Skill"
 msgstr ""
 
-#: class-dresscode-skills.php:629
-#: class-dresscode-skills.php:630
+#: class-dresscode-skills.php:691
+#: class-dresscode-skills.php:692
 msgid "Skills"
 msgstr ""
 
@@ -106,43 +106,43 @@ msgstr ""
 msgid "Temperature"
 msgstr ""
 
-#: class-dresscode-skills.php:754
+#: class-dresscode-skills.php:816
 msgid "zip 内须含 SKILL.md（可在根目录，或单个子文件夹下）。上传后将以此 zip 内容创建/替换 Skill 文件夹，下面的 SKILL.md 文本框会被忽略。"
 msgstr ""
 
-#: class-dresscode-skills.php:755
+#: class-dresscode-skills.php:817
 msgid "上传 Skill 文件夹"
 msgstr ""
 
-#: class-dresscode-skills.php:752
+#: class-dresscode-skills.php:814
 msgid "上传 zip 导入"
 msgstr ""
 
-#: class-dresscode-skills.php:839
+#: class-dresscode-skills.php:901
 msgid "上传文件数量不完整，请检查服务器的 max_file_uploads 限制，或使用 ZIP 导入。"
 msgstr ""
 
-#: class-dresscode-skills.php:998
+#: class-dresscode-skills.php:1060
 msgid "上传的 zip 文件无效。"
 msgstr ""
 
-#: class-dresscode-editor.php:143
+#: class-dresscode-editor.php:150
 msgid "仍在优化中，内容较长时可能需要 1~3 分钟，请稍候…"
 msgstr ""
 
-#: class-dresscode-editor.php:137
+#: class-dresscode-editor.php:143
 msgid "优化失败（原因未知，请查看 DressCode → 设置中的最近失败记录）。"
 msgstr ""
 
-#: class-dresscode-editor.php:134
+#: class-dresscode-editor.php:140
 msgid "优化完成"
 msgstr ""
 
-#: class-dresscode-editor.php:141
+#: class-dresscode-editor.php:147
 msgid "优化期间内容已发生变化，结果未覆盖原内容。请重新优化。"
 msgstr ""
 
-#: class-dresscode-editor.php:142
+#: class-dresscode-editor.php:148
 msgid "优化期间编辑窗口已关闭或切换标签，结果未应用。请重新打开标签并优化。"
 msgstr ""
 
@@ -150,33 +150,52 @@ msgstr ""
 msgid "你是 HTML 样式优化助手。请严格按照系统消息中的规范，优化下面这段 HTML 的样式与结构：保留语义化标签与原有内容文字，补充必要的内联样式或 CSS 变量，使其符合品牌视觉标准。只输出优化后的完整 HTML 代码片段，不要任何解释说明，不要使用 markdown 代码围栏（```）。需要优化的 HTML 如下："
 msgstr ""
 
-#: class-dresscode-editor.php:231
+#: class-dresscode-editor.php:218
 msgid "你是 HTML 样式优化助手。请优化用户提供的 HTML，使其语义清晰、样式规范、响应式，只输出优化后的完整 HTML 片段，不要解释、不要 markdown 围栏。"
 msgstr ""
 
-#: class-dresscode-skills.php:779
+#: class-dresscode-skills.php:841
 msgid "保存 Skill"
 msgstr ""
 
-#: class-dresscode-skills.php:699
+#: class-dresscode-skills.php:761
 msgid "删除"
 msgstr ""
 
-#: class-dresscode-skills.php:1037
+#: class-dresscode-skills.php:1099
 msgid "压缩包内未找到 SKILL.md（应在根目录或单个子文件夹下）。"
 msgstr ""
 
-#: class-dresscode-skills.php:766
+#: class-dresscode-skills.php:828
 msgid "参考文件"
 msgstr ""
 
-#: class-dresscode-skills.php:681
-#: class-dresscode-skills.php:741
+#: class-dresscode-skills.php:743
+#: class-dresscode-skills.php:803
 msgid "名称"
 msgstr ""
 
-#: class-dresscode-skills.php:813
+#: class-dresscode-skills.php:875
 msgid "名称不能为空。"
+msgstr ""
+
+#: class-dresscode-editor.php:257
+#: class-dresscode-editor.php:261
+#: class-dresscode-editor.php:281
+msgid "后台任务无效或已过期。"
+msgstr ""
+
+#: class-dresscode-editor.php:149
+#: class-dresscode-editor.php:264
+msgid "后台任务未完成或已过期。请检查服务器后台任务和网络后重试。"
+msgstr ""
+
+#: class-dresscode-editor.php:272
+msgid "后台任务未能启动。请检查 WordPress 回环请求和定时任务配置。"
+msgstr ""
+
+#: class-dresscode-editor.php:331
+msgid "后台优化发生错误，请检查服务器日志。"
 msgstr ""
 
 #: class-wordpress-plugin-template-settings.php:198
@@ -187,7 +206,7 @@ msgstr ""
 msgid "如 glm-4.6、glm-4.5、glm-4-plus 等，按账号可用模型填写。"
 msgstr ""
 
-#: class-dresscode-editor.php:144
+#: class-dresscode-editor.php:151
 msgid "安全校验已过期（页面打开时间过长），请刷新页面后重试。"
 msgstr ""
 
@@ -195,70 +214,76 @@ msgstr ""
 msgid "接口地址"
 msgstr ""
 
-#: class-dresscode-skills.php:744
+#: class-dresscode-skills.php:806
 msgid "描述"
 msgstr ""
 
-#: class-dresscode-skills.php:684
+#: class-dresscode-skills.php:746
 msgid "操作"
 msgstr ""
 
-#: class-dresscode-skills.php:947
+#: class-dresscode-skills.php:1009
 msgid "文件上传失败或包含多个根文件夹。"
 msgstr ""
 
-#: class-dresscode-skills.php:682
-#: class-dresscode-skills.php:748
+#: class-dresscode-skills.php:744
+#: class-dresscode-skills.php:810
 msgid "文件夹"
 msgstr ""
 
-#: class-dresscode-skills.php:749
+#: class-dresscode-skills.php:811
 msgid "文件夹名（slug）创建后不可更改；上传 zip 会替换其内容。"
 msgstr ""
 
-#: class-dresscode-skills.php:964
+#: class-dresscode-skills.php:1026
 msgid "文件夹根目录必须包含 SKILL.md。"
 msgstr ""
 
-#: class-dresscode-skills.php:939
+#: class-dresscode-skills.php:1001
 msgid "文件夹路径无效。"
 msgstr ""
 
-#: class-dresscode-skills.php:658
-#: class-dresscode-skills.php:730
+#: class-dresscode-skills.php:720
+#: class-dresscode-skills.php:792
 msgid "新增 / 导入 Skill"
 msgstr ""
 
-#: class-dresscode-skills.php:800
-#: class-dresscode-skills.php:830
-#: class-dresscode-skills.php:1092
+#: class-dresscode-skills.php:862
+#: class-dresscode-skills.php:892
+#: class-dresscode-skills.php:1154
 msgid "无效请求。"
 msgstr ""
 
-#: class-dresscode-editor.php:186
-#: class-dresscode-skills.php:796
-#: class-dresscode-skills.php:1088
+#: class-dresscode-editor.php:192
+#: class-dresscode-editor.php:253
+#: class-dresscode-skills.php:858
+#: class-dresscode-skills.php:1150
 msgid "无权限。"
 msgstr ""
 
-#: class-dresscode-skills.php:959
+#: class-dresscode-skills.php:1021
 msgid "无法保存上传的文件。"
 msgstr ""
 
-#: class-dresscode-skills.php:930
+#: class-dresscode-skills.php:992
 msgid "无法创建临时文件夹。"
 msgstr ""
 
-#: class-dresscode-skills.php:1003
+#: class-dresscode-editor.php:224
+#: class-dresscode-editor.php:231
+msgid "无法创建后台任务，请稍后重试。"
+msgstr ""
+
+#: class-dresscode-skills.php:1065
 msgid "无法初始化文件系统。"
 msgstr ""
 
-#: class-dresscode-skills.php:975
-#: class-dresscode-skills.php:982
+#: class-dresscode-skills.php:1037
+#: class-dresscode-skills.php:1044
 msgid "无法替换现有 Skill 文件夹。"
 msgstr ""
 
-#: class-dresscode-skills.php:688
+#: class-dresscode-skills.php:750
 msgid "暂无 Skill，请新增或导入。"
 msgstr ""
 
@@ -266,11 +291,11 @@ msgstr ""
 msgid "最近一次 AI 优化失败："
 msgstr ""
 
-#: class-dresscode-skills.php:763
+#: class-dresscode-skills.php:825
 msgid "未导入 ZIP 或文件夹时，以此文本保存 SKILL.md。"
 msgstr ""
 
-#: class-dresscode-skills.php:871
+#: class-dresscode-skills.php:933
 msgid "未能创建 Skill 文件夹。"
 msgstr ""
 
@@ -278,12 +303,12 @@ msgstr ""
 msgid "未配置 GLM API Key，请先在 DressCode 设置中填写。"
 msgstr ""
 
-#: class-dresscode-editor.php:139
-#: class-dresscode-editor.php:223
+#: class-dresscode-editor.php:145
+#: class-dresscode-editor.php:215
 msgid "未配置 GLM API Key，请到 DressCode → 设置中填写。"
 msgstr ""
 
-#: class-dresscode-editor.php:135
+#: class-dresscode-editor.php:141
 msgid "本地处理"
 msgstr ""
 
@@ -291,40 +316,40 @@ msgstr ""
 msgid "模型"
 msgstr ""
 
-#: class-dresscode-skills.php:659
+#: class-dresscode-skills.php:721
 msgid "每个 Skill 是一个包含 SKILL.md 的文件夹。可编辑或导入 ZIP / 文件夹，AI 会读取其中所有 Markdown 文件。"
 msgstr ""
 
-#: class-dresscode-skills.php:926
+#: class-dresscode-skills.php:988
 msgid "浏览器未提供文件夹路径，请改用 ZIP 导入。"
 msgstr ""
 
-#: class-dresscode-skills.php:698
+#: class-dresscode-skills.php:760
 msgid "编辑"
 msgstr ""
 
-#: class-dresscode-skills.php:730
+#: class-dresscode-skills.php:792
 msgid "编辑 Skill： %s"
 msgstr ""
 
-#: class-dresscode-skills.php:775
+#: class-dresscode-skills.php:837
 msgid "编辑器 AI 按钮未选择时使用此 Skill"
 msgstr ""
 
-#: class-dresscode-editor.php:140
-#: class-dresscode-editor.php:201
+#: class-dresscode-editor.php:146
+#: class-dresscode-editor.php:197
 msgid "编辑器内容为空，无内容可优化。"
 msgstr ""
 
-#: class-dresscode-editor.php:146
+#: class-dresscode-editor.php:153
 msgid "网关/服务器超时（HTTP %s）。内容可能过长或模型响应超时，可选中部分内容分段优化。"
 msgstr ""
 
-#: class-dresscode-editor.php:145
+#: class-dresscode-editor.php:152
 msgid "网络错误或请求被中断（HTTP 0）。请检查服务器能否访问设置中的接口地址。"
 msgstr ""
 
-#: class-dresscode-skills.php:774
+#: class-dresscode-skills.php:836
 msgid "设为默认"
 msgstr ""
 
@@ -332,23 +357,23 @@ msgstr ""
 msgid "设置"
 msgstr ""
 
-#: class-dresscode-skills.php:859
+#: class-dresscode-skills.php:921
 msgid "请上传 zip，或填写 SKILL.md 内容。"
 msgstr ""
 
-#: class-dresscode-skills.php:825
+#: class-dresscode-skills.php:887
 msgid "请只选择 ZIP 或文件夹中的一种。"
 msgstr ""
 
-#: class-dresscode-editor.php:147
+#: class-dresscode-editor.php:154
 msgid "请求失败（HTTP %s）"
 msgstr ""
 
-#: class-dresscode-skills.php:780
+#: class-dresscode-skills.php:842
 msgid "返回"
 msgstr ""
 
-#: class-dresscode-skills.php:771
+#: class-dresscode-skills.php:833
 msgid "这些 Markdown 文件会自动拼接到 System Prompt 末尾。"
 msgstr ""
 
@@ -356,7 +381,7 @@ msgstr ""
 msgid "选择 API 协议。GLM Coding Plan 使用固定的 Coding 接口地址，不使用下方接口地址。"
 msgstr ""
 
-#: class-dresscode-skills.php:759
+#: class-dresscode-skills.php:821
 msgid "选择包含 SKILL.md 的文件夹。将导入其中所有 Markdown 文件及目录结构；其他文件不会导入。请勿同时选择 ZIP。"
 msgstr ""
 
@@ -364,11 +389,11 @@ msgstr ""
 msgid "配置智谱 GLM（BigModel）API。API Key 优先在此填写。"
 msgstr ""
 
-#: class-dresscode-skills.php:683
+#: class-dresscode-skills.php:745
 msgid "默认"
 msgstr ""
 
-#: class-dresscode-skills.php:511
+#: class-dresscode-skills.php:573
 msgid "默认通用规范：rem 字体系统、1.5 行高、圆角、响应式基准、CSS 变量。可编辑或重新上传覆盖。"
 msgstr ""
 

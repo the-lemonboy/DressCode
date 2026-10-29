@@ -65,6 +65,11 @@ class DressCode_Editor {
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ), 20, 1 );
 		add_action( 'wp_ajax_dresscode_optimize', array( $this, 'handle_optimize' ) );
+		add_action( 'wp_ajax_dresscode_job_status', array( $this, 'handle_job_status' ) );
+		add_action( 'wp_ajax_nopriv_dresscode_job_worker', array( $this, 'handle_job_worker' ) );
+		add_action( 'wp_ajax_dresscode_job_worker', array( $this, 'handle_job_worker' ) );
+		add_action( 'dresscode_run_job', array( $this, 'run_job' ) );
+		add_action( 'dresscode_cleanup_job', array( $this, 'cleanup_job' ) );
 	}
 
 	/**
@@ -125,6 +130,7 @@ class DressCode_Editor {
 				'ajaxUrl'         => admin_url( 'admin-ajax.php' ),
 				'nonce'           => wp_create_nonce( 'dresscode_optimize' ),
 				'action'          => 'dresscode_optimize',
+				'statusAction'    => 'dresscode_job_status',
 				'skills'          => $skills,
 				'defaultSkillId'  => $default_skill_id,
 				'hasApiKey'       => ! empty( $this->api_key ) ? 1 : 0,
@@ -140,6 +146,7 @@ class DressCode_Editor {
 					'empty'          => __( '编辑器内容为空，无内容可优化。', 'dresscode' ),
 					'contentChanged' => __( '优化期间内容已发生变化，结果未覆盖原内容。请重新优化。', 'dresscode' ),
 					'tabChanged'     => __( '优化期间编辑窗口已关闭或切换标签，结果未应用。请重新打开标签并优化。', 'dresscode' ),
+					'jobExpired'     => __( '后台任务未完成或已过期。请检查服务器后台任务和网络后重试。', 'dresscode' ),
 					'stillWorking'   => __( '仍在优化中，内容较长时可能需要 1~3 分钟，请稍候…', 'dresscode' ),
 					'nonceExpired'   => __( '安全校验已过期（页面打开时间过长），请刷新页面后重试。', 'dresscode' ),
 					'networkError'   => __( '网络错误或请求被中断（HTTP 0）。请检查服务器能否访问设置中的接口地址。', 'dresscode' ),
@@ -181,76 +188,172 @@ class DressCode_Editor {
 	 */
 	public function handle_optimize() {
 		check_ajax_referer( 'dresscode_optimize', 'nonce' );
-
 		if ( ! current_user_can( 'edit_posts' ) ) {
-			$this->fail( __( '无权限。', 'dresscode' ), 403 );
+			wp_send_json_error( __( '无权限。', 'dresscode' ), 403 );
 		}
-
-		$content   = isset( $_POST['content'] ) ? wp_unslash( $_POST['content'] ) : '';
-		$skill_id  = isset( $_POST['skill_id'] ) ? (int) $_POST['skill_id'] : 0;
-
-		$context = array(
-			'user'     => get_current_user_id(),
-			'skill'    => $skill_id,
-			'length'   => strlen( $content ),
-			'model'    => $this->model,
-			'endpoint' => wp_parse_url( $this->endpoint, PHP_URL_HOST ),
-		);
-
+		$content = isset( $_POST['content'] ) && is_string( $_POST['content'] ) ? wp_unslash( $_POST['content'] ) : '';
+		$skill_id = isset( $_POST['skill_id'] ) ? (int) $_POST['skill_id'] : 0;
 		if ( '' === trim( $content ) ) {
-			$this->fail( __( '编辑器内容为空，无内容可优化。', 'dresscode' ), null, $context );
+			wp_send_json_error( __( '编辑器内容为空，无内容可优化。', 'dresscode' ), 400 );
 		}
-
 		$started = microtime( true );
-		// Only apply deterministic rendering when the selected skill is exactly
-		// the unmodified bundled skill; customized instructions always use AI.
+		$prompt = '';
+		if ( isset( $GLOBALS['dresscode_skills'] ) && $GLOBALS['dresscode_skills'] instanceof DressCode_Skills ) {
+			$prompt = $GLOBALS['dresscode_skills']->get_skill_prompt( $skill_id );
+		}
 		$bundled_path = dirname( __DIR__ ) . '/assets/skills/camthink-pdp/SKILL.md';
 		$bundled = is_readable( $bundled_path ) ? file_get_contents( $bundled_path ) : false;
-		$selected_prompt = '';
-		if ( isset( $GLOBALS['dresscode_skills'] ) && $GLOBALS['dresscode_skills'] instanceof DressCode_Skills ) {
-			$selected_prompt = $GLOBALS['dresscode_skills']->get_skill_prompt( $skill_id );
-		}
-		if ( false !== $bundled && $selected_prompt === $bundled ) {
+		if ( false !== $bundled && $prompt === $bundled ) {
 			require_once __DIR__ . '/class-dresscode-resource-fast-path.php';
 			$icon_base = plugin_dir_url( dirname( __DIR__ ) . '/dresscode.php' ) . 'assets/icons';
-			$fast_html = DressCode_Resource_Fast_Path::render( $content, $icon_base );
-			if ( false !== $fast_html ) {
-				wp_send_json_success( array( 'html' => $fast_html, 'method' => 'local', 'elapsed_ms' => (int) round( ( microtime( true ) - $started ) * 1000 ) ) );
+			$html = DressCode_Resource_Fast_Path::render( $content, $icon_base );
+			if ( false !== $html ) {
+				wp_send_json_success( array( 'html' => $html, 'method' => 'local', 'elapsed_ms' => (int) round( ( microtime( true ) - $started ) * 1000 ) ) );
 			}
 		}
-
 		if ( empty( $this->api_key ) ) {
-			$this->fail( __( '未配置 GLM API Key，请到 DressCode → 设置中填写。', 'dresscode' ), null, $context );
+			wp_send_json_error( __( '未配置 GLM API Key，请到 DressCode → 设置中填写。', 'dresscode' ), 400 );
 		}
-
-		// Resolve the skill system prompt (reads SKILL.md + references from disk).
-		$system_prompt = $selected_prompt;
-
-		if ( '' === trim( $system_prompt ) ) {
-			// Last-resort fallback prompt.
-			$system_prompt = __( '你是 HTML 样式优化助手。请优化用户提供的 HTML，使其语义清晰、样式规范、响应式，只输出优化后的完整 HTML 片段，不要解释、不要 markdown 围栏。', 'dresscode' );
+		if ( '' === trim( $prompt ) ) {
+			$prompt = __( '你是 HTML 样式优化助手。请优化用户提供的 HTML，使其语义清晰、样式规范、响应式，只输出优化后的完整 HTML 片段，不要解释、不要 markdown 围栏。', 'dresscode' );
 		}
-		// Resolve site-local static icons for skills that use the token.
-		$system_prompt = str_replace( '{{DRESSCODE_ICON_BASE_URL}}', plugin_dir_url( dirname( __DIR__ ) . '/dresscode.php' ) . 'assets/icons', $system_prompt );
+		$prompt = str_replace( '{{DRESSCODE_ICON_BASE_URL}}', plugin_dir_url( dirname( __DIR__ ) . '/dresscode.php' ) . 'assets/icons', $prompt );
+		try {
+			$id = bin2hex( random_bytes( 24 ) );
+		} catch ( Exception $e ) {
+			wp_send_json_error( __( '无法创建后台任务，请稍后重试。', 'dresscode' ), 500 );
+		}
+		$job = array(
+			'user' => get_current_user_id(), 'skill' => $skill_id, 'status' => 'queued',
+			'created' => time(), 'content' => $content, 'prompt' => $prompt,
+		);
+		if ( ! set_transient( 'dresscode_job_' . $id, $job, 2 * HOUR_IN_SECONDS ) ) {
+			wp_send_json_error( __( '无法创建后台任务，请稍后重试。', 'dresscode' ), 500 );
+		}
+		// Cron is a fallback if the immediate loopback cannot start. Both use an
+		// atomic database lock, so the same task cannot run twice.
+		wp_schedule_single_event( time() + 20, 'dresscode_run_job', array( $id ) );
+		wp_schedule_single_event( time() + 2 * HOUR_IN_SECONDS, 'dresscode_cleanup_job', array( $id ) );
+		$this->dispatch_job( $id );
+		wp_send_json_success( array( 'job_id' => $id, 'status' => 'queued' ) );
+	}
 
-		$client  = new DressCode_GLM_Client( $this->api_key, $this->endpoint, $this->model, $this->temperature, $this->format );
-		$result  = $client->optimize( $this->pre_clean( $content ), $system_prompt );
+	/** Start a worker without waiting for its model request. */
+	protected function dispatch_job( $id ) {
+		wp_remote_post( admin_url( 'admin-ajax.php' ), array(
+			'timeout' => 0.01, 'blocking' => false,
+			'body' => array( 'action' => 'dresscode_job_worker', 'job_id' => $id ),
+		) );
+	}
 
+	/** Only the job owner can read the job and its generated content. */
+	public function handle_job_status() {
+		check_ajax_referer( 'dresscode_optimize', 'nonce' );
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			wp_send_json_error( __( '无权限。', 'dresscode' ), 403 );
+		}
+		$id = isset( $_POST['job_id'] ) && is_string( $_POST['job_id'] ) ? wp_unslash( $_POST['job_id'] ) : '';
+		if ( ! preg_match( '/^[a-f0-9]{48}$/', $id ) ) {
+			wp_send_json_error( __( '后台任务无效或已过期。', 'dresscode' ), 404 );
+		}
+		$job = get_transient( 'dresscode_job_' . $id );
+		if ( ! is_array( $job ) || (int) $job['user'] !== get_current_user_id() ) {
+			wp_send_json_error( __( '后台任务无效或已过期。', 'dresscode' ), 404 );
+		}
+		if ( in_array( $job['status'], array( 'queued', 'running' ), true ) && time() - (int) $job['created'] > 360 ) {
+			wp_send_json_error( __( '后台任务未完成或已过期。请检查服务器后台任务和网络后重试。', 'dresscode' ) );
+		}
+		if ( 'queued' === $job['status'] && time() - (int) $job['created'] > 45 ) {
+			$lock = 'dresscode_job_' . $id . '_lock';
+			if ( add_option( $lock, time(), '', 'no' ) ) {
+				$current = get_transient( 'dresscode_job_' . $id );
+				if ( is_array( $current ) && 'queued' === $current['status'] ) {
+					$current['status'] = 'failed';
+					$current['error'] = __( '后台任务未能启动。请检查 WordPress 回环请求和定时任务配置。', 'dresscode' );
+					unset( $current['content'], $current['prompt'] );
+					set_transient( 'dresscode_job_' . $id, $current, 2 * HOUR_IN_SECONDS );
+					delete_option( $lock );
+					wp_send_json_error( $current['error'] );
+				}
+				delete_option( $lock );
+				$job = $current;
+				if ( ! is_array( $job ) ) {
+					wp_send_json_error( __( '后台任务无效或已过期。', 'dresscode' ), 404 );
+				}
+			} else {
+				// A worker is acquiring the same lock; let the next poll observe it.
+				wp_send_json_success( array( 'status' => 'running' ) );
+			}
+		}
+		if ( 'failed' === $job['status'] ) {
+			wp_send_json_error( $job['error'] );
+		}
+		if ( 'done' === $job['status'] ) {
+			wp_send_json_success( array( 'status' => 'done', 'html' => $job['html'], 'method' => 'ai', 'elapsed_ms' => $job['elapsed_ms'] ) );
+		}
+		wp_send_json_success( array( 'status' => $job['status'] ) );
+	}
+
+	/** Loopback endpoint: random job ID is the capability; execution is locked. */
+	public function handle_job_worker() {
+		$id = isset( $_POST['job_id'] ) && is_string( $_POST['job_id'] ) ? wp_unslash( $_POST['job_id'] ) : '';
+		$this->run_job( $id );
+		wp_die();
+	}
+
+	/** Execute at most once, even when the loopback and cron race. */
+	public function run_job( $id ) {
+		if ( ! is_string( $id ) || ! preg_match( '/^[a-f0-9]{48}$/', $id ) ) {
+			return;
+		}
+		$key = 'dresscode_job_' . $id;
+		$job = get_transient( $key );
+		if ( ! is_array( $job ) || 'queued' !== $job['status'] || time() - (int) $job['created'] > 360 ) {
+			return;
+		}
+		if ( ! add_option( $key . '_lock', time(), '', 'no' ) ) {
+			return;
+		}
+		$job = get_transient( $key );
+		if ( ! is_array( $job ) || 'queued' !== $job['status'] ) {
+			delete_option( $key . '_lock' );
+			return;
+		}
+		ignore_user_abort( true );
+		if ( function_exists( 'set_time_limit' ) ) { @set_time_limit( 360 ); }
+		$job['status'] = 'running';
+		set_transient( $key, $job, 2 * HOUR_IN_SECONDS );
+		$started = microtime( true );
+		try {
+			$client = new DressCode_GLM_Client( $this->api_key, $this->endpoint, $this->model, $this->temperature, $this->format );
+			$result = $client->optimize( $this->pre_clean( $job['content'] ), $job['prompt'] );
+		} catch ( Throwable $error ) {
+			$result = array( 'success' => false, 'error' => __( '后台优化发生错误，请检查服务器日志。', 'dresscode' ) );
+			error_log( '[DressCode] Background worker exception: ' . get_class( $error ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		}
+		unset( $job['content'], $job['prompt'] );
+		$job['elapsed_ms'] = (int) round( ( microtime( true ) - $started ) * 1000 );
 		if ( empty( $result['success'] ) ) {
-			$error = $result['error'];
-			if ( false !== stripos( (string) $error, 'timed out' ) ) {
-				$error = __( 'AI 生成超时（内容可能过长），请重试；若仍超时，可选中一部分内容分段优化。', 'dresscode' );
-			}
-			if ( isset( $result['diagnostics'] ) && is_array( $result['diagnostics'] ) ) {
-				$context['response'] = $result['diagnostics'];
-			}
-			$this->fail( $error, null, $context + array( 'raw_error' => (string) $result['error'] ) );
+			$job['status'] = 'failed';
+			$job['error'] = stripos( (string) $result['error'], 'timed out' ) !== false
+				? __( 'AI 接口请求超时，请检查接口状态和服务器网络后重试。', 'dresscode' ) : (string) $result['error'];
+			$context = array( 'user' => $job['user'], 'skill' => $job['skill'], 'model' => $this->model, 'endpoint' => wp_parse_url( $this->endpoint, PHP_URL_HOST ), 'raw_error' => (string) $result['error'] );
+			if ( isset( $result['diagnostics'] ) && is_array( $result['diagnostics'] ) ) { $context['response'] = $result['diagnostics']; }
+			update_option( 'dresscode_last_error', array( 'time' => time(), 'message' => $job['error'], 'context' => $context ), false );
+		} else {
+			$job['status'] = 'done';
+			$job['html'] = $this->minify_html( $result['data'] );
 		}
+		set_transient( $key, $job, 2 * HOUR_IN_SECONDS );
+		delete_option( $key . '_lock' );
+	}
 
-		// A success clears the recorded last failure.
-		delete_option( 'dresscode_last_error' );
-
-		wp_send_json_success( array( 'html' => $this->minify_html( $result['data'] ), 'method' => 'ai', 'elapsed_ms' => (int) round( ( microtime( true ) - $started ) * 1000 ) ) );
+	/** Remove temporary job content and its lock. */
+	public function cleanup_job( $id ) {
+		if ( is_string( $id ) && preg_match( '/^[a-f0-9]{48}$/', $id ) ) {
+			delete_transient( 'dresscode_job_' . $id );
+			delete_option( 'dresscode_job_' . $id . '_lock' );
+		}
 	}
 
 	/**

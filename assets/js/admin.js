@@ -285,12 +285,48 @@
 			}, sec * 1000 );
 		} );
 
+		var completed = $.Deferred();
+		var startedAt = Date.now();
+		var pollErrors = 0;
+		function poll( id ) {
+			if ( Date.now() - startedAt > 390000 ) {
+				completed.resolve( { success: false, data: CTAI.i18n.jobExpired } );
+				return;
+			}
+			$.post( CTAI.ajaxUrl, { action: CTAI.statusAction, nonce: CTAI.nonce, job_id: id } )
+				.done( function ( res ) {
+					pollErrors = 0;
+					if ( ! res || ! res.success || ! res.data || res.data.status === 'done' ) {
+						completed.resolve( res );
+					} else if ( res.data.status === 'queued' || res.data.status === 'running' ) {
+						setTimeout( function () { poll( id ); }, 2000 );
+					} else {
+						completed.resolve( { success: false, data: CTAI.i18n.jobExpired } );
+					}
+				} )
+				.fail( function ( xhr ) {
+					// Brief network interruptions should not abandon a running job.
+					if ( ( ! xhr.status || xhr.status >= 500 ) && ++pollErrors <= 3 ) {
+						setTimeout( function () { poll( id ); }, 3000 );
+					} else {
+						completed.reject( xhr );
+					}
+				} );
+		}
 		$.post( CTAI.ajaxUrl, {
 			action: CTAI.action,
 			nonce: CTAI.nonce,
 			content: content,
 			skill_id: currentSkillId( $button )
 		} ).done( function ( res ) {
+			if ( res && res.success && res.data && res.data.job_id ) {
+				setTimeout( function () { poll( res.data.job_id ); }, 1200 );
+			} else {
+				completed.resolve( res );
+			}
+		} ).fail( function ( xhr ) { completed.reject( xhr ); } );
+
+		completed.done( function ( res ) {
 			if ( res && res.success && res.data && res.data.html ) {
 				if ( applyFn( res.data.html ) !== false ) {
 					var message = CTAI.i18n.done;
