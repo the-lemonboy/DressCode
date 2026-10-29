@@ -271,10 +271,6 @@
 	 * optimized HTML to `applyFn`. Each button tracks its own request.
 	 */
 	function sendAndApply( content, applyFn, $button ) {
-		if ( ! CTAI.hasApiKey ) {
-			showError( CTAI.i18n.noKey );
-			return;
-		}
 		if ( $button.data( 'dresscode-busy' ) ) {
 			return;
 		}
@@ -297,7 +293,11 @@
 		} ).done( function ( res ) {
 			if ( res && res.success && res.data && res.data.html ) {
 				if ( applyFn( res.data.html ) !== false ) {
-					toast( CTAI.i18n.done, false );
+					var message = CTAI.i18n.done;
+					if ( typeof res.data.elapsed_ms === 'number' ) {
+						message += ' (' + ( res.data.method === 'local' ? CTAI.i18n.localMethod : CTAI.i18n.aiMethod ) + ', ' + ( res.data.elapsed_ms / 1000 ).toFixed( 1 ) + 's)';
+					}
+					toast( message, false );
 				}
 			} else {
 				var msg = CTAI.i18n.failed;

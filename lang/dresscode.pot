@@ -19,11 +19,15 @@ msgstr ""
 msgid "AI 优化中…"
 msgstr ""
 
-#: class-dresscode-editor.php:136
+#: class-dresscode-editor.php:138
 msgid "AI 优化失败"
 msgstr ""
 
-#: class-dresscode-editor.php:225
+#: class-dresscode-editor.php:136
+msgid "AI 处理"
+msgstr ""
+
+#: class-dresscode-editor.php:242
 msgid "AI 生成超时（内容可能过长），请重试；若仍超时，可选中一部分内容分段优化。"
 msgstr ""
 
@@ -89,7 +93,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: class-dresscode-editor.php:146
+#: class-dresscode-editor.php:148
 msgid "Skill"
 msgstr ""
 
@@ -122,11 +126,11 @@ msgstr ""
 msgid "上传的 zip 文件无效。"
 msgstr ""
 
-#: class-dresscode-editor.php:141
+#: class-dresscode-editor.php:143
 msgid "仍在优化中，内容较长时可能需要 1~3 分钟，请稍候…"
 msgstr ""
 
-#: class-dresscode-editor.php:135
+#: class-dresscode-editor.php:137
 msgid "优化失败（原因未知，请查看 DressCode → 设置中的最近失败记录）。"
 msgstr ""
 
@@ -134,11 +138,11 @@ msgstr ""
 msgid "优化完成"
 msgstr ""
 
-#: class-dresscode-editor.php:139
+#: class-dresscode-editor.php:141
 msgid "优化期间内容已发生变化，结果未覆盖原内容。请重新优化。"
 msgstr ""
 
-#: class-dresscode-editor.php:140
+#: class-dresscode-editor.php:142
 msgid "优化期间编辑窗口已关闭或切换标签，结果未应用。请重新打开标签并优化。"
 msgstr ""
 
@@ -146,7 +150,7 @@ msgstr ""
 msgid "你是 HTML 样式优化助手。请严格按照系统消息中的规范，优化下面这段 HTML 的样式与结构：保留语义化标签与原有内容文字，补充必要的内联样式或 CSS 变量，使其符合品牌视觉标准。只输出优化后的完整 HTML 代码片段，不要任何解释说明，不要使用 markdown 代码围栏（```）。需要优化的 HTML 如下："
 msgstr ""
 
-#: class-dresscode-editor.php:214
+#: class-dresscode-editor.php:231
 msgid "你是 HTML 样式优化助手。请优化用户提供的 HTML，使其语义清晰、样式规范、响应式，只输出优化后的完整 HTML 片段，不要解释、不要 markdown 围栏。"
 msgstr ""
 
@@ -183,7 +187,7 @@ msgstr ""
 msgid "如 glm-4.6、glm-4.5、glm-4-plus 等，按账号可用模型填写。"
 msgstr ""
 
-#: class-dresscode-editor.php:142
+#: class-dresscode-editor.php:144
 msgid "安全校验已过期（页面打开时间过长），请刷新页面后重试。"
 msgstr ""
 
@@ -231,7 +235,7 @@ msgstr ""
 msgid "无效请求。"
 msgstr ""
 
-#: class-dresscode-editor.php:184
+#: class-dresscode-editor.php:186
 #: class-dresscode-skills.php:796
 #: class-dresscode-skills.php:1088
 msgid "无权限。"
@@ -274,9 +278,13 @@ msgstr ""
 msgid "未配置 GLM API Key，请先在 DressCode 设置中填写。"
 msgstr ""
 
-#: class-dresscode-editor.php:137
-#: class-dresscode-editor.php:203
+#: class-dresscode-editor.php:139
+#: class-dresscode-editor.php:223
 msgid "未配置 GLM API Key，请到 DressCode → 设置中填写。"
+msgstr ""
+
+#: class-dresscode-editor.php:135
+msgid "本地处理"
 msgstr ""
 
 #: class-wordpress-plugin-template-settings.php:225
@@ -303,16 +311,16 @@ msgstr ""
 msgid "编辑器 AI 按钮未选择时使用此 Skill"
 msgstr ""
 
-#: class-dresscode-editor.php:138
-#: class-dresscode-editor.php:199
+#: class-dresscode-editor.php:140
+#: class-dresscode-editor.php:201
 msgid "编辑器内容为空，无内容可优化。"
 msgstr ""
 
-#: class-dresscode-editor.php:144
+#: class-dresscode-editor.php:146
 msgid "网关/服务器超时（HTTP %s）。内容可能过长或模型响应超时，可选中部分内容分段优化。"
 msgstr ""
 
-#: class-dresscode-editor.php:143
+#: class-dresscode-editor.php:145
 msgid "网络错误或请求被中断（HTTP 0）。请检查服务器能否访问设置中的接口地址。"
 msgstr ""
 
@@ -332,7 +340,7 @@ msgstr ""
 msgid "请只选择 ZIP 或文件夹中的一种。"
 msgstr ""
 
-#: class-dresscode-editor.php:145
+#: class-dresscode-editor.php:147
 msgid "请求失败（HTTP %s）"
 msgstr ""
 

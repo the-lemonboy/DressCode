@@ -132,6 +132,8 @@ class DressCode_Editor {
 					'buttonLabel'    => __( 'AI 优化', 'dresscode' ),
 					'loading'        => __( 'AI 优化中…', 'dresscode' ),
 					'done'           => __( '优化完成', 'dresscode' ),
+					'localMethod'    => __( '本地处理', 'dresscode' ),
+					'aiMethod'       => __( 'AI 处理', 'dresscode' ),
 					'failed'         => __( '优化失败（原因未知，请查看 DressCode → 设置中的最近失败记录）。', 'dresscode' ),
 					'errorTitle'     => __( 'AI 优化失败', 'dresscode' ),
 					'noKey'          => __( '未配置 GLM API Key，请到 DressCode → 设置中填写。', 'dresscode' ),
@@ -199,15 +201,30 @@ class DressCode_Editor {
 			$this->fail( __( '编辑器内容为空，无内容可优化。', 'dresscode' ), null, $context );
 		}
 
+		$started = microtime( true );
+		// Only apply deterministic rendering when the selected skill is exactly
+		// the unmodified bundled skill; customized instructions always use AI.
+		$bundled_path = dirname( __DIR__ ) . '/assets/skills/camthink-pdp/SKILL.md';
+		$bundled = is_readable( $bundled_path ) ? file_get_contents( $bundled_path ) : false;
+		$selected_prompt = '';
+		if ( isset( $GLOBALS['dresscode_skills'] ) && $GLOBALS['dresscode_skills'] instanceof DressCode_Skills ) {
+			$selected_prompt = $GLOBALS['dresscode_skills']->get_skill_prompt( $skill_id );
+		}
+		if ( false !== $bundled && $selected_prompt === $bundled ) {
+			require_once __DIR__ . '/class-dresscode-resource-fast-path.php';
+			$icon_base = plugin_dir_url( dirname( __DIR__ ) . '/dresscode.php' ) . 'assets/icons';
+			$fast_html = DressCode_Resource_Fast_Path::render( $content, $icon_base );
+			if ( false !== $fast_html ) {
+				wp_send_json_success( array( 'html' => $fast_html, 'method' => 'local', 'elapsed_ms' => (int) round( ( microtime( true ) - $started ) * 1000 ) ) );
+			}
+		}
+
 		if ( empty( $this->api_key ) ) {
 			$this->fail( __( '未配置 GLM API Key，请到 DressCode → 设置中填写。', 'dresscode' ), null, $context );
 		}
 
 		// Resolve the skill system prompt (reads SKILL.md + references from disk).
-		$system_prompt = '';
-		if ( isset( $GLOBALS['dresscode_skills'] ) && $GLOBALS['dresscode_skills'] instanceof DressCode_Skills ) {
-			$system_prompt = $GLOBALS['dresscode_skills']->get_skill_prompt( $skill_id );
-		}
+		$system_prompt = $selected_prompt;
 
 		if ( '' === trim( $system_prompt ) ) {
 			// Last-resort fallback prompt.
@@ -233,7 +250,7 @@ class DressCode_Editor {
 		// A success clears the recorded last failure.
 		delete_option( 'dresscode_last_error' );
 
-		wp_send_json_success( array( 'html' => $this->minify_html( $result['data'] ) ) );
+		wp_send_json_success( array( 'html' => $this->minify_html( $result['data'] ), 'method' => 'ai', 'elapsed_ms' => (int) round( ( microtime( true ) - $started ) * 1000 ) ) );
 	}
 
 	/**

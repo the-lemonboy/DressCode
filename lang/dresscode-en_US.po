@@ -20,6 +20,9 @@ msgstr "Optimizing…"
 msgid "AI 优化失败"
 msgstr "AI optimization failed"
 
+msgid "AI 处理"
+msgstr "AI"
+
 msgid "AI 生成超时（内容可能过长），请重试；若仍超时，可选中一部分内容分段优化。"
 msgstr "The AI request timed out (the content may be too long). Please retry; if it keeps timing out, select part of the content and optimize it in sections."
 
@@ -202,6 +205,9 @@ msgstr "No GLM API key configured. Set one under DressCode → Settings first."
 
 msgid "未配置 GLM API Key，请到 DressCode → 设置中填写。"
 msgstr "No GLM API key configured — please fill it in under DressCode → Settings."
+
+msgid "本地处理"
+msgstr "Local"
 
 msgid "模型"
 msgstr "Model"
