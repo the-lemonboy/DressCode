@@ -79,7 +79,7 @@ class DressCode_Skills {
 	 * whenever the stored version is older, so file-only updates do not
 	 * require re-activating the plugin.
 	 */
-	const DB_VERSION = '3';
+	const DB_VERSION = '4';
 
 	/**
 	 * Run the upgrade (schema + migration + seed) if needed.
@@ -94,9 +94,31 @@ class DressCode_Skills {
 			return;
 		}
 		$this->upgrade();
-		if ( $this->install_pdp_default() ) {
-			update_option( 'dresscode_db_version', self::DB_VERSION );
+		if ( version_compare( $current, '3', '<' ) && ! $this->install_pdp_default() ) {
+			return;
 		}
+		if ( version_compare( $current, '3', '>=' ) && ! $this->update_unmodified_pdp_skill() ) {
+			return;
+		}
+		update_option( 'dresscode_db_version', self::DB_VERSION );
+	}
+
+	/** Update only the previously bundled prompt; preserve user edits. */
+	protected function update_unmodified_pdp_skill() {
+		global $wpdb;
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT folder FROM {$this->table} WHERE name = %s", 'CamThink PDP' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$source = dirname( __DIR__ ) . '/assets/skills/camthink-pdp/SKILL.md';
+		$prompt = is_readable( $source ) ? file_get_contents( $source ) : false;
+		if ( false === $prompt ) {
+			return false;
+		}
+		foreach ( (array) $rows as $row ) {
+			$old = $this->read_skill_md( $row->folder );
+			if ( hash( 'sha256', $old ) === '1a9265f047513cda0f87744ecdfaf75f89159e449ad7521de3719c2474762650' && ! $this->write_skill_md( $row->folder, $prompt ) ) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/** Install the bundled PDP skill as the default without overwriting user skills. */

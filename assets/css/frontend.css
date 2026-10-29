@@ -8,3 +8,38 @@
 .dresscode-resource-link:focus-visible img[src*="/assets/icons/resource-"]:not([src*="resource-arrow.svg"]) {
 	filter: brightness(0) saturate(100%) invert(37%) sepia(91%) saturate(2728%) hue-rotate(1deg) brightness(100%) contrast(105%);
 }
+
+/* Key/value specification tables retain their normal two-column layout on desktop. */
+table.dresscode-spec-table tbody tr > :is(th, td) {
+	padding: 1rem 1.25rem;
+	border: 0;
+	border-bottom: 1px solid var(--border, #dbdbdb);
+	background: transparent;
+	text-align: left;
+	vertical-align: top;
+}
+table.dresscode-spec-table tbody tr > :first-child {
+	width: 30%;
+	font-weight: 600;
+	color: var(--ink, #333);
+}
+
+@media (max-width: 767px) {
+	table.dresscode-spec-table,
+	table.dresscode-spec-table tbody,
+	table.dresscode-spec-table tbody tr,
+	table.dresscode-spec-table tbody tr > :is(th, td) {
+		display: block;
+		width: 100%;
+		box-sizing: border-box;
+	}
+	table.dresscode-spec-table tbody tr > :first-child {
+		padding: 1rem 0 0.25rem;
+		border-bottom: 0;
+		font-size: 0.875rem;
+		text-transform: uppercase;
+	}
+	table.dresscode-spec-table tbody tr > :last-child {
+		padding: 0.25rem 0 1rem;
+	}
+}
