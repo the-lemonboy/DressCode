@@ -21,7 +21,7 @@ description: CamThink 商品详情 HTML 样式优化，包含响应式表格和�
 | h2 | `margin:2rem 0 1rem;font-size:clamp(1.5rem,1.6vw + 1.13rem,2.375rem);font-weight:600;color:var(--ink);letter-spacing:-0.01em` |
 | h3 | `margin:1.75rem 0 0.75rem;font-size:clamp(1.25rem,0.5vw + 1.14rem,1.5rem);font-weight:600;color:var(--ink)` |
 | h4 | `margin:1.5rem 0 0.5rem;font-size:clamp(1.125rem,0.25vw + 1.07rem,1.25rem);font-weight:500;color:var(--ink)` |
-| p | `margin:0.875rem 0 0;font-size:16px;line-height:1.5` |
+| p | `font-size:16px;line-height:1.5`（不设置 margin） |
 | strong | `font-weight:600;color:var(--ink)` |
 | a | `color:var(--brand);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:0.2em` |
 | ul | `list-style:square outside;padding-left:1.375rem`（不设置 margin） |

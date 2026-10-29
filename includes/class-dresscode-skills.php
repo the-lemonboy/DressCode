@@ -79,7 +79,7 @@ class DressCode_Skills {
 	 * whenever the stored version is older, so file-only updates do not
 	 * require re-activating the plugin.
 	 */
-	const DB_VERSION = '4';
+	const DB_VERSION = '5';
 
 	/**
 	 * Run the upgrade (schema + migration + seed) if needed.
@@ -114,7 +114,11 @@ class DressCode_Skills {
 		}
 		foreach ( (array) $rows as $row ) {
 			$old = $this->read_skill_md( $row->folder );
-			if ( hash( 'sha256', $old ) === '1a9265f047513cda0f87744ecdfaf75f89159e449ad7521de3719c2474762650' && ! $this->write_skill_md( $row->folder, $prompt ) ) {
+			$previous = array(
+				'1a9265f047513cda0f87744ecdfaf75f89159e449ad7521de3719c2474762650',
+				'87b2597a5e0a954144af9d475ac1a7ea388876fd97144864d9e3e3ad805242c6',
+			);
+			if ( in_array( hash( 'sha256', $old ), $previous, true ) && ! $this->write_skill_md( $row->folder, $prompt ) ) {
 				return false;
 			}
 		}
