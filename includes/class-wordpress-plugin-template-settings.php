@@ -237,6 +237,7 @@ class WordPress_Plugin_Template_Settings {
 					'placeholder' => '0.3',
 					'min'         => '0',
 					'max'         => '2',
+					'step'        => 'any',
 				),
 			),
 		);
