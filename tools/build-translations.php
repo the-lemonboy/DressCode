@@ -16,6 +16,7 @@ $map = array(
 	'AI 优化' => 'AI Optimize',
 	'AI 优化中…' => 'Optimizing…',
 	'优化期间内容已发生变化，结果未覆盖原内容。请重新优化。' => 'The content changed during optimization, so the result was not applied. Please try again.',
+	'优化期间编辑窗口已关闭或切换标签，结果未应用。请重新打开标签并优化。' => 'The editing window was closed or switched to another tab, so the result was not applied. Reopen the tab and try again.',
 	'AI 优化失败' => 'AI optimization failed',
 	'仍在优化中，内容较长时可能需要 1~3 分钟，请稍候…' => 'Still optimizing. Longer content may take 1–3 minutes; please wait…',
 	'优化失败（原因未知，请查看 DressCode → 设置中的最近失败记录）。' => 'Optimization failed. Check the latest failure in DressCode → Settings.',

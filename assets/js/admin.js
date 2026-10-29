@@ -121,7 +121,10 @@
 		}
 
 		try {
-			if ( ed ) {
+			// In Text mode the textarea is authoritative. Calling setContent on
+			// a hidden TinyMCE instance can rewrite or discard the HTML just
+			// inserted there; WordPress syncs it when Visual mode is opened.
+			if ( ed && ! ed.isHidden() ) {
 				ed.setContent( $( el ).val() );
 			}
 		} catch ( e ) {}
@@ -337,6 +340,7 @@
 			if ( editorId === 'wb_tab_editor' &&
 				( ! $button.closest( '.wb_cptb_tab_edit_popup' ).is( ':visible' ) ||
 					$save.data( 'target-tab' ) !== targetTab ) ) {
+				showError( CTAI.i18n.tabChanged );
 				return false;
 			}
 			var current = getContent( editorId );
