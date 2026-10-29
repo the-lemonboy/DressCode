@@ -79,7 +79,7 @@ class DressCode_Skills {
 	 * whenever the stored version is older, so file-only updates do not
 	 * require re-activating the plugin.
 	 */
-	const DB_VERSION = '7';
+	const DB_VERSION = '8';
 
 	/**
 	 * Run the upgrade (schema + migration + seed) if needed.
@@ -106,15 +106,25 @@ class DressCode_Skills {
 		update_option( 'dresscode_db_version', self::DB_VERSION );
 	}
 
-	/** Rename the original built-in entry without changing customized entries. */
+	/** Rename legacy PDP entries while preserving customized descriptions. */
 	protected function localize_pdp_skill_metadata() {
 		global $wpdb;
 		$result = $wpdb->update(
 			$this->table,
-			array( 'name' => '商品页样式优化', 'description' => '优化商品详情页的排版、表格和资源链接样式，适配桌面及移动端。' ),
+			array( 'description' => '优化商品详情页的排版、表格和资源链接样式，适配桌面及移动端。' ),
 			array( 'name' => 'CamThink PDP', 'description' => 'CamThink product detail styling' ),
-			array( '%s', '%s' ),
+			array( '%s' ),
 			array( '%s', '%s' )
+		);
+		if ( false === $result ) {
+			return false;
+		}
+		$result = $wpdb->update(
+			$this->table,
+			array( 'name' => '商品页样式优化' ),
+			array( 'name' => 'CamThink PDP' ),
+			array( '%s' ),
+			array( '%s' )
 		);
 		if ( false === $result ) {
 			return false;
